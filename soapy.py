@@ -24,7 +24,7 @@ class SFS:
         self.fractional_branch_weights = tuple((1/w) - sym.floor(1/w) for w in self.branch_weights)
         self.euler_number = self.central_weight - sum([1/w for w in self.branch_weights])
         self.exceptional_fibers = len(self.branch_weights)
-    
+
     def __repr__(self):
         branch_weights_string = ', '.join([str(q) for q in self.branch_weights])
         return 'Y({}; {})'.format(self.central_weight, branch_weights_string)

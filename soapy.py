@@ -113,6 +113,8 @@ class SFS:
             raise Exception('The SFS specified is not homeomorphic to a prism manifold!')
         return Prism((self.euler_number).q, (self.euler_number).p)
 
+S3 = SFS(1)
+
 ##############################################################################################################################################################################################
 
 class Lens(SFS):

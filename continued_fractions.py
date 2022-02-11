@@ -38,34 +38,30 @@ def number_to_pos_cont_frac(p,q):
           p, q = q, p - sym.floor(p/q)*q
      return list(map(int, [epsilon*l for l in L]))
 
-def neg_cont_frac_to_number(*args):
+def number_from_neg_cont_frac(*args):
      '''This computes (-)-continued fraction of an arbitrary list of coefficients.
 
           Args:
-               L(list): A list of integers which are the coefficients of a (-)-continued fraction decomposition.
+               *args(int): A variable number of integers which are the coefficients of a (-)-continued fraction decomposition.
           
           Returns:
                x(sym.Rational): The rational number p/q with corresponding coefficients in its (-)-continued fraction decomposition.
      '''
-     L = list(args)
-     L.reverse()
-     x = L[0]
-     for i in L[1:]:
+     x = args[-1]
+     for i in args[-2::-1]:
           x = i - sym.Rational(1, x)
      return x
 
-def pos_cont_frac_to_number(*args):
+def number_from_pos_cont_frac(*args):
      '''This computes (+)-continued fraction of an arbitrary list of coefficients.
 
           Args:
-               L(list): A list of integers which are the coefficients of a (+)-continued fraction decomposition.
+               *args(int): A variable number of integers which are the coefficients of a (+)-continued fraction decomposition.
           
           Returns:
                x(sym.Rational): The rational number p/q with corresponding coefficients in its (+)-continued fraction decomposition.
      '''
-     L = list(args)
-     L.reverse()
-     x = L[0]
-     for i in L[1:]:
+     x = args[-1]
+     for i in args[-2::-1]:
           x = i + sym.Rational(1, x)
      return x

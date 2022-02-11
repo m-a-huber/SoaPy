@@ -102,7 +102,7 @@ class SFS:
         if self.exceptional_fibers == 2:
             coeffs.reverse()
             coeffs += cf.number_to_neg_cont_frac(self.branch_weights[1].p, self.branch_weights[1].q)
-        frac = -cf.neg_cont_frac_to_number(*coeffs)
+        frac = -cf.number_from_neg_cont_frac(*coeffs)
         return Lens(frac.p, frac.q)
     
     def is_prism_mfld(self):
@@ -142,8 +142,12 @@ class Lens(SFS):
         if epsilon not in  {-1, 1}:
             raise Exception('The second (optional) argument should be plus/minus 1!')
         if epsilon == -1:
-            return cf.number_to_neg_cont_frac(-self.p, self.q)
-        return cf.number_to_neg_cont_frac(self.p, self.p - self.q)
+            return tuple(cf.number_to_neg_cont_frac(-self.p, self.q))
+        return tuple(cf.number_to_neg_cont_frac(self.p, self.p - self.q))
+
+def lens_from_linear_lattice(*params):
+    p, q = cf.number_from_neg_cont_frac(*params).p, cf.number_from_neg_cont_frac(*params).q
+    return -Lens(p,q)
 
 ##############################################################################################################################################################################################
 

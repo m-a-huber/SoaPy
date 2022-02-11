@@ -7,8 +7,23 @@ import ribbon_obstruction as rib
 ##############################################################################################################################################################################################
 
 class SFS:
+    '''This is a class for working with orientable Seifert fibered spaces (SFS) whose base orbifold is the 2-sphere. 
+     
+        Attributes:
+            params (list of int): List of integer coefficients representing the SFS specified. These do not necessarily coincide with the input parameters, but rather are normalized in such a way that the corresponding integer surgery diagram is definite.
+            central_weight (int): The weight of the central vertex of the normalized surgery description of the SFS specified.
+            branch_weights (tuple of sym.Rational): Tuple containing the rational surgery coefficients of the exceptional fibers of the SFS specified.
+            fractional_branch_weights (tuple of sym.Rational): Tuple containing the fractional parts of the branch weights.
+            euler_number (sym.Rational): The orbifold Euler number of the normalized surgery description of the SFS specified.
+            exceptional_fibers (int): The number of exceptional fibers of the normalized surgery description of the SFS specified.
+    '''
     
     def __init__(self, *params):
+        '''The constructor for the SFS class.
+     
+            Parameters:
+                params (list of int): A variable number of integers specifying a SFS. The list must be of the format (e, a_1, b_1, ..., a_n, b_n), where e is the integer framing of the central unknot, and the a_i/b_i are the rational framings of the exceptional fibers (expressed as a reduced fraction). If the input list specifies a SFS with non-zero first Betti number, an error is raised.
+        '''
         cond_1 = all(isinstance(el, int) for el in params)
         cond_2 = len(params)%2 == 1
         cond_3 = all([sym.gcd(params[i], params[i+1]) == 1 for i in range(1,len(params),2)])
@@ -59,29 +74,93 @@ class SFS:
         return False
     
     def seifert_invariants(self):
+        '''Returns the Seifert invariants of the SFS specified.
+     
+            Parameters:
+                None
+            
+            Returns:
+                seifert_invariants (tuple): A tuple of the format (Euler number, (tuple of fractional branch weights)).
+        '''
         return (self.euler_number, self.fractional_branch_weights)
     
     def linking_matrix(self):
+        '''Returns the linking matrix of the SFS specified.
+     
+            Parameters:
+                None
+            
+            Returns:
+                linking_matrix (sym.Matrix): A SymPy-matrix with SymPy-integers as entries, representing the linking matrix of the integer plumbing corresponding to the SFS specified.
+        '''
         return hf.linking_matrix(self.params)
     
     def first_homology(self):
-        return abs(sym.det(self.linking_matrix()))
+        '''Returns the order of the first homology of the SFS specified.
+     
+            Parameters:
+                None
+            
+            Returns:
+                first_homology (int): The order of the first homology of the SFS specified.
+        '''
+        return int(abs(sym.det(self.linking_matrix())))
     
     def spinc_to_HF(self):
+        '''Computes HF^+ in each spin^c-structure of the SFS specified. The Z[U]-module-structure of HF^+ is encoded as a dictionary of the format {'order of Z[U]-module-summand' : 'list of bottommost gradings of all Z[U]-module-summands of that order'}.
+     
+            Parameters:
+                None
+
+            Returns:
+                spinc_to_HF(dict): A dictionary of the format {'spin^c-structure' : 'Z[U]-module-structure of HF^+'}.
+        '''
         return hf.spinc_to_HF(self.params)
     
     def print_HF(self):
+        '''Prints HF^+ of the SFS specified by a definite plumbing in a more legible manner.
+     
+            Parameters:
+                None
+
+            Returns:
+                None: Prints HF^+ of the Seifert fibered space specified.
+        '''
         print('HF^+({}):'.format(self))
         hf.print_HF(self.params)
         return
     
     def correction_terms(self):
+        '''Returns a list of the corrections terms of the SFS specified.
+     
+            Parameters:
+                None
+
+            Returns:
+                correction_terms (list of sym.Rational): List of all correction terms of the SFS specified.
+        '''
         return tuple(sorted(hf.correction_terms(self.params)))
     
     def is_lspace(self):
+        '''Checks whether or not the SFS specified is a Heegaard Floer L-space.
+     
+            Parameters:
+                None
+
+            Returns:
+                bool: Whether or not the the SFS specified is an L-space.
+        '''
         return hf.is_lspace(self.params)
     
     def casson_walker(self):
+        '''Computes the Casson-Walker invariant of the SFS specified.
+     
+            Parameters:
+                None
+
+            Returns:
+                casson_walker (sym.Rational): The Casson-Walker invariant of the SFS specified.
+        '''
         if self.is_lens_space():
             self = self.to_lens_space()
             return cw.casson_walker_lens(self.p, self.q)
@@ -91,9 +170,25 @@ class SFS:
         return cw.casson_walker(self.params)
 
     def is_lens_space(self):
+        '''Checks whether or not the SFS specified is homeomorphic to a lens space.
+     
+            Parameters:
+                None
+
+            Returns:
+                bool: Whether or not the the SFS specified is homeomorphic to a lens space.
+        '''
         return self.exceptional_fibers <= 2
     
     def to_lens_space(self):
+        '''Transforms the SFS specified into the corresponding lens space, provided it is homeomorphic to one. If the SFS specified is not homeomorphic to any lens space, an error is raised.
+     
+            Parameters:
+                None
+
+            Returns:
+                to_lens_space (soapy.Lens): Lens space homeomorphic to the SFS specified.
+        '''
         if not self.is_lens_space():
             raise Exception('The SFS specified is not homeomorphic to a lens space!')
         coeffs = [sym.Rational(self.central_weight)]
@@ -106,9 +201,25 @@ class SFS:
         return Lens(frac.p, frac.q)
     
     def is_prism_mfld(self):
+        '''Checks whether or not the SFS specified is homeomorphic to a prism manifold.
+     
+            Parameters:
+                None
+
+            Returns:
+                bool: Whether or not the the SFS specified is homeomorphic to a prism manifold.
+        '''
         return self.fractional_branch_weights.count(sym.Rational(1,2)) >= 2 and self.exceptional_fibers == 3
     
     def to_prism_mfld(self):
+        '''Transforms the SFS specified into the corresponding prism manifold, provided it is homeomorphic to one. If the SFS specified is not homeomorphic to any prism manifold, an error is raised.
+     
+            Parameters:
+                None
+
+            Returns:
+                to_prism_mfld (soapy.Prism): Prism manifold homeomorphic to the SFS specified.
+        '''
         if not self.is_prism_mfld():
             raise Exception('The SFS specified is not homeomorphic to a prism manifold!')
         return Prism((self.euler_number).q, (self.euler_number).p)

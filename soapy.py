@@ -22,7 +22,7 @@ class SFS:
         '''The constructor for the SFS class.
      
             Parameters:
-                params (list of int): A variable number of integers specifying a SFS. The list must be of the format (e, a_1, b_1, ..., a_n, b_n), where e is the integer framing of the central unknot, and the a_i/b_i are the rational framings of the exceptional fibers (expressed as a reduced fraction). If the input list specifies a SFS with non-zero first Betti number, an error is raised.
+                *params (list of int): A variable number of integers specifying a SFS. The list must be of the format (e, a_1, b_1, ..., a_n, b_n), where e is the integer framing of the central unknot, and the a_i/b_i are the rational framings of the exceptional fibers (expressed as a reduced fraction). If the input list specifies a SFS with non-zero first Betti number, an error is raised.
         '''
         cond_1 = all(isinstance(el, int) for el in params)
         cond_2 = len(params)%2 == 1
@@ -230,7 +230,20 @@ poincare_sphere = SFS(-2,-5,4,-3,2,-2,1)
 ##############################################################################################################################################################################################
 
 class Lens(SFS):
+    '''This is a subclass of SFS representing lens spaces.
+     
+        Attributes:
+            p (int): The first parameter of the lens space specified, normalized to be greater than zero.
+            q (int): The second parameter of the lens space specified, normalized so that p > q > 0.
+    '''
+
     def __init__(self, p, q):
+        '''The constructor for the Lens subclass. A lens space is specified by a pair of non-zero coprime integers p and q. The constructor normalizes the parameters to satisfy p > q > 0.
+     
+            Parameters:
+                p (int): The first parameter of the lens space.
+                q (int): The second parameter of the lens space.
+        '''
         cond_1 = all(isinstance(el, int) for el in (p,q))
         cond_2 = sym.gcd(p,q) == 1
         cond_3 = p*q != 0
@@ -247,19 +260,48 @@ class Lens(SFS):
         return Lens(self.p, -self.q)
 
     def to_SFS(self):
+        '''Transforms the lens space specified into a SFS.
+     
+            Parameters:
+                None
+            
+            Returns:
+                to_SFS (soapy.SFS): A soapy.SFS object representing a SFS homeomorphic to the lens space specified.
+        '''
         return SFS(*hf.lens(self.p,self.q))
 
     def linear_lattice(self, epsilon=-1):
+        '''Returns the integer weights of the linear plumbing graph corresponding to the lens space specified. Equivalently, these are the norms of the basis elements of the linear lattice corresponding to the lens space specified. By default, the wights of the corresponding negative definite plumbing graph are returned. To return the weights of the positive definite plumbing graph, set epsilon to +1.
+     
+            Parameters:
+                epsilon (int): Either +1 or -1 (default). Determines the sense of definiteness of the linear plumbing graph.
+            
+            Returns:
+                linear_lattice (tuple of int): The integer weights of the plumbing graph corresponding to the lens space specified.
+        '''
         if epsilon not in  {-1, 1}:
             raise Exception('The second (optional) argument should be plus/minus 1!')
         if epsilon == -1:
-            return cf.number_to_neg_cont_frac(-self.p, self.q)
-        return cf.number_to_neg_cont_frac(self.p, self.p - self.q)
+            return tuple(cf.number_to_neg_cont_frac(-self.p, self.q))
+        return tuple(cf.number_to_neg_cont_frac(self.p, self.p - self.q))
 
 ##############################################################################################################################################################################################
 
 class Prism(SFS):
+    '''This is a subclass of SFS representing prism manifolds.
+     
+        Attributes:
+            p (int): The first parameter of the prism manifold specified, normalized to be greater than 1.
+            q (int): The second parameter of the prism manifold specified; can be any non-zero integer.
+    '''
+
     def __init__(self, p, q):
+        '''The constructor for the Prism subclass. A prism manifold is specified by a pair of non-zero coprime integers p and q, where p is greater than 1 and q is non-zero.
+     
+            Parameters:
+                p (int): The first parameter of the prism manifold.
+                q (int): The second parameter of the prism manifold.
+        '''
         cond_1 = all(isinstance(el, int) for el in (p,q))
         cond_2 = abs(p) > 1
         cond_3 = sym.gcd(p,q) == 1
@@ -276,12 +318,31 @@ class Prism(SFS):
         return Prism(self.p, -self.q)
     
     def to_SFS(self):
+        '''Transforms the prism manifold specified into a SFS.
+     
+            Parameters:
+                None
+            
+            Returns:
+                to_SFS (soapy.SFS): A soapy.SFS object representing a SFS homeomorphic to the prism manifold specified.
+        '''
         return SFS(*hf.prism(self.p,self.q))
 
 ##############################################################################################################################################################################################
 
 class Brieskorn(SFS):
+    '''This is a subclass of SFS representing Brieskorn homology spheres.
+     
+        Attributes:
+            coeffs (list of int): The parameters of the Brieskorn sphere specified.
+    '''
+
     def __init__(self, *params):
+        '''The constructor for the Brieskorn subclass. A Brieskorn homology sphere is specified by a list of integers a_1, .., a_n that are pairwise coprime, each greater than 1 in absolute value, and all of the same sign. If all the parameters are negative, this returns -Sigma(a_1, ...,a_n) (i.e. with orientation reversed).
+     
+            Parameters:
+                *params (list of int): The parameters specifying a Brieskorn sphere.
+        '''
         cond_1 = all(isinstance(el, int) for el in params)
         cond_2 = min(map(abs, params)) > 1
         cond_3 = len(set(map(sym.sign, params))) == 1
@@ -301,6 +362,14 @@ class Brieskorn(SFS):
         return Brieskorn(*map(lambda x : -x, self.coeffs))
     
     def to_SFS(self):
+        '''Transforms the Brieskorn homology sphere specified into a SFS.
+     
+            Parameters:
+                None
+            
+            Returns:
+                to_SFS (soapy.SFS): A soapy.SFS object representing a SFS homeomorphic to the Brieskorn sphere specified.
+        '''
         return SFS(*hf.brieskorn(*self.coeffs))
 
 ##############################################################################################################################################################################################

@@ -145,13 +145,14 @@ class Lens(SFS):
             return tuple(cf.number_to_neg_cont_frac(-self.p, self.q))
         return tuple(cf.number_to_neg_cont_frac(self.p, self.p - self.q))
 
-def lens_from_linear_lattice(*params):
-    cond_1 = all(isinstance(el, int) for el in params)
-    cond_2 = all(el!=0 for el in params)
-    if not min(cond_1, cond_2):
-        raise Exception('The weights on the linear lattice should be non-zero integers!')
-    p, q = cf.number_from_neg_cont_frac(*params).p, cf.number_from_neg_cont_frac(*params).q
-    return -Lens(p,q)
+    @classmethod
+    def from_linear_lattice(cls, *params):
+        cond_1 = all(isinstance(el, int) for el in params)
+        cond_2 = all(el!=0 for el in params)
+        if not min(cond_1, cond_2):
+            raise Exception('The weights on the linear lattice should be non-zero integers!')
+        p, q = cf.number_from_neg_cont_frac(*params).p, cf.number_from_neg_cont_frac(*params).q
+        return -cls(p,q)
 
 ##############################################################################################################################################################################################
 

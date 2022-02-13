@@ -45,10 +45,14 @@ class SFS:
         return 'Y({}; {})'.format(self.central_weight, branch_weights_string)
     
     def __neg__(self):
+        '''Returns the SFS with reversed orientation.
+        '''
         params = tuple(-((-1)**i)*self.params[i] for i in range(len(self.params)))
         return SFS(*params)
     
     def __eq__(self, other):
+        '''Checks if the two SFS are orientation-preservingly homeomorphic.
+        '''
         if isinstance(other, SFS):
             if not max(self.is_lens_space(), other.is_lens_space()):
                 seifert_self = (self.euler_number, sorted(self.fractional_branch_weights))
@@ -60,6 +64,8 @@ class SFS:
         return False
     
     def __le__(self, other):
+        '''Checks if the first SFS passes the d-invariant obstruction to admitting a ribbon rational homology cobordism to the second SFS.
+        '''
         if isinstance(other, SFS):
             if self == other:
                 return True
@@ -67,6 +73,8 @@ class SFS:
         return False
     
     def __lt__(self, other):
+        '''Same as __le__, but returns 'False' if the two SFS are, in fact, orientation-preservingly homeomorphic to one another.
+        '''
         if isinstance(other, SFS):
             if self == other:
                 return False
@@ -257,6 +265,8 @@ class Lens(SFS):
         return 'L({}, {})'.format(self.p,self.q)
     
     def __neg__(self):
+        '''Returns the lens space with reversed orientation.
+        '''
         return Lens(self.p, -self.q)
 
     def to_SFS(self):
@@ -315,6 +325,8 @@ class Prism(SFS):
         return 'P({}, {})'.format(self.p,self.q)
     
     def __neg__(self):
+        '''Returns the prism manifold with reversed orientation.
+        '''
         return Prism(self.p, -self.q)
     
     def to_SFS(self):
@@ -359,6 +371,8 @@ class Brieskorn(SFS):
         return '{}Sigma({})'.format(sign, coeffs_string)
 
     def __neg__(self):
+        '''Returns the Brieskorn homology sphere with reversed orientation.
+        '''
         return Brieskorn(*map(lambda x : -x, self.coeffs))
     
     def to_SFS(self):

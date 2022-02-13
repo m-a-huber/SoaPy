@@ -24,6 +24,18 @@ class SFS:
         self.fractional_branch_weights = tuple((1/w) - sym.floor(1/w) for w in self.branch_weights)
         self.euler_number = self.central_weight - sum([1/w for w in self.branch_weights])
         self.exceptional_fibers = len(self.branch_weights)
+    
+    @classmethod
+    def from_plumbing(cls, central_weight, *lists_of_coeffs):
+        cond_1 = isinstance(central_weight, int)
+        cond_2 = all(isinstance(lst, list) for lst in lists_of_coeffs)
+        cond_3 = all(all(isinstance(el, int) for el in lst) for lst in lists_of_coeffs)
+        cond_4 = all(all(el!=0 for el in lst) for lst in lists_of_coeffs)
+        if not min(cond_1, cond_2, cond_3, cond_4):
+            raise Exception('The weights on the plumbing graph should be non-zero integers!')
+        branch_weights = tuple(cf.number_from_neg_cont_frac(*[i for i in lst]) for lst in lists_of_coeffs)
+        params = sum(((w.p, w.q) for w in branch_weights), ())
+        return cls(central_weight, *params)
 
     def __repr__(self):
         branch_weights_string = ', '.join([str(q) for q in self.branch_weights])
@@ -57,6 +69,10 @@ class SFS:
                 return False
             return self <= other
         return False
+    
+    def to_plumbing(self):
+        lists_of_coeffs = (cf.number_to_neg_cont_frac(w.p, w.q) for w in self.branch_weights)
+        return (self.central_weight,) + tuple(lst for lst in lists_of_coeffs)
     
     def seifert_invariants(self):
         return (self.euler_number, self.fractional_branch_weights)
@@ -129,6 +145,15 @@ class Lens(SFS):
         self.p = abs(p)
         self.q = (lambda x : 1 if x==0 else x)((lambda q : q%p if p>0 else (self.p-q)%self.p)(q))
     
+    @classmethod
+    def from_linear_lattice(cls, *params):
+        cond_1 = all(isinstance(el, int) for el in params)
+        cond_2 = all(el!=0 for el in params)
+        if not min(cond_1, cond_2):
+            raise Exception('The weights on the linear lattice should be non-zero integers!')
+        p, q = cf.number_from_neg_cont_frac(*params).p, cf.number_from_neg_cont_frac(*params).q
+        return -cls(p,q)
+    
     def __repr__(self):
         return 'L({}, {})'.format(self.p,self.q)
     
@@ -138,21 +163,12 @@ class Lens(SFS):
     def to_SFS(self):
         return SFS(*hf.lens(self.p,self.q))
 
-    def linear_lattice(self, epsilon=-1):
+    def to_linear_lattice(self, epsilon=-1):
         if epsilon not in  {-1, 1}:
             raise Exception('The second (optional) argument should be plus/minus 1!')
         if epsilon == -1:
-            return tuple(cf.number_to_neg_cont_frac(-self.p, self.q))
-        return tuple(cf.number_to_neg_cont_frac(self.p, self.p - self.q))
-
-    @classmethod
-    def from_linear_lattice(cls, *params):
-        cond_1 = all(isinstance(el, int) for el in params)
-        cond_2 = all(el!=0 for el in params)
-        if not min(cond_1, cond_2):
-            raise Exception('The weights on the linear lattice should be non-zero integers!')
-        p, q = cf.number_from_neg_cont_frac(*params).p, cf.number_from_neg_cont_frac(*params).q
-        return -cls(p,q)
+            return cf.number_to_neg_cont_frac(-self.p, self.q)
+        return cf.number_to_neg_cont_frac(self.p, self.p - self.q)
 
 ##############################################################################################################################################################################################
 

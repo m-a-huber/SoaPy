@@ -50,7 +50,7 @@ def number_from_neg_cont_frac(*args):
      x = args[-1]
      for i in args[-2::-1]:
           x = i - sym.Rational(1, x)
-     return x
+     return sym.Rational(x)
 
 def number_from_pos_cont_frac(*args):
      '''This computes (+)-continued fraction of an arbitrary list of coefficients.
@@ -64,4 +64,4 @@ def number_from_pos_cont_frac(*args):
      x = args[-1]
      for i in args[-2::-1]:
           x = i + sym.Rational(1, x)
-     return x
+     return sym.Rational(x)

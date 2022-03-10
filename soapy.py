@@ -1,4 +1,5 @@
 import sympy as sym
+from sympy.matrices.normalforms import invariant_factors
 import hf_nemethi as hf
 import casson_walker as cw
 import continued_fractions as cf
@@ -120,13 +121,24 @@ class SFS:
         return hf.linking_matrix(self.params)
     
     def first_homology(self):
+        '''Returns the first homology of the SFS specified.
+     
+            Parameters:
+                None
+            
+            Returns:
+                first_homology (tuple of int): The orders of the non-trivial cyclic summands of the first homology of the SFS specified.
+        '''
+        return tuple(int(i) for i in map(abs, invariant_factors(self.linking_matrix())) if i!=1)
+    
+    def order_of_first_homology(self):
         '''Returns the order of the first homology of the SFS specified.
      
             Parameters:
                 None
             
             Returns:
-                first_homology (int): The order of the first homology of the SFS specified.
+                order_of_first_homology (int): The order of the first homology of the SFS specified.
         '''
         return int(abs(sym.det(self.linking_matrix())))
     

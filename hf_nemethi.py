@@ -6,15 +6,15 @@ import continued_fractions as cf
 # Auxiliary functions that convert 3-manifold notation into the format required for input.
 
 def normalize(C):
-    '''This returns the Euler number as well as the normalized input string (corresponding to a definite plumbing) for the SFS specified.
+    """This returns the Euler number as well as the normalized input string(corresponding to a definite plumbing) for the SFS specified.
     If the SFS sepcified has vanishing Euler number, an empty list of coefficients is returned.
-     
-        Args:
-            C(list of int): List of integer coefficients specifying a SFS.
 
-        Returns:
-            (sympy.Rational, L(list of int)): A tuple containing the Euler number and the coefficients of the input string of SFS specified, expressed as a definite plumbing.
-    '''
+    Args:
+        C (list of int): List of integer coefficients specifying a SFS.
+
+    Returns:
+        tuple(sym.Rational, list[int]): A tuple containing the Euler number and the coefficients of the input string of SFS specified, expressed as a definite plumbing.
+    """    
     central_weight = sym.Rational(C[0])
     branch_weights = tuple(sym.Rational(C[i], C[i+1]) for i in range(1,len(C),2))
     fractional_branch_weights = [(1/w) - sym.floor(1/w) for w in branch_weights]
@@ -26,15 +26,15 @@ def normalize(C):
     return (euler_number, [int(new_central_weight)] + [i for w in new_branch_weights for i in [w.p, w.q]])
 
 def lens(p,q):
-    '''This returns the input string (corresponding to the negative definite plumbing) for the lens space L(p,q), for p and q coprime.
-     
-        Args:
-            p(int): The first parameter of L(p,q), a non-zero integer.
-            q(int): The second parameter of L(p,q), a non-zero integer.
+    """This returns the input string (corresponding to the negative definite plumbing) for the lens space L(p,q), for p and q coprime.
 
-        Returns:
-            L(list of int): The coefficients of the input string for the lens space L(p,q).
-    '''
+    Args:
+        p (int): The first parameter of L(p,q), a non-zero integer.
+        q (int): The second parameter of L(p,q), a non-zero integer.
+
+    Returns:
+        list[int]: The coefficients of the input string for the lens space L(p,q).
+    """    
     if abs(p) == 1:
         return [-1]
     epsilon = sym.sign(p)
@@ -46,15 +46,15 @@ def lens(p,q):
     return list(map(int, [-sym.ceiling(sym.Rational(p,q)),-q,sym.ceiling(sym.Rational(p,q))*q-p]))
 
 def prism(p,q):
-    '''This returns the input string for the prism manifold P(p,q).
-     
-        Args:
-            p(int): The first parameter of P(p,q), an integer greater than 1 in absolute value.
-            q(int): The second parameter of P(p,q), a non-zero integer.
+    """This returns the input string for the prism manifold P(p,q).
 
-        Returns:
-            L(list of int): The coefficients of the input string for the prism manifold P(p,q).
-    '''
+    Args:
+        p (int): The first parameter of P(p,q), an integer greater than 1 in absolute value.
+        q (int): The second parameter of P(p,q), a non-zero integer.
+
+    Returns:
+        list[int]: The coefficients of the input string for the prism manifold P(p,q).
+    """    
     if p <= 0:
         p, q = -p, -q
     epsilon = -1
@@ -72,15 +72,15 @@ def prism(p,q):
     return list(map(int, L))
 
 def brieskorn(*A):
-    '''This returns the input string for the Brieskorn homology sphere Sigma(a_1, ..., a_n).
+    """This returns the input string for the Brieskorn homology sphere Sigma(a_1, ..., a_n).
     If all of a_1, ..., a_n are negative, the input string for -Sigma(a_1, ..., a_n) is returned.
-     
-        Args:
-            L(list of int): The coefficients of Sigma(a_1, ..., a_n), each greater than 1 in abolute value and all of the same sign.
 
-        Returns:
-            L(list of int): The coefficients of the input string for the Brieskorn homology sphere Sigma(a_1, ..., a_n).
-    '''
+    Args:
+        *args (int): The coefficients of Sigma(a_1, ..., a_n), each greater than 1 in abolute value and all of the same sign.
+
+    Returns:
+        list[int]: The coefficients of the input string for the Brieskorn homology sphere Sigma(a_1, ..., a_n).
+    """    
     epsilon = sym.sign(A[0])
     if epsilon == -1:
         A = list(map(abs, A))
@@ -204,14 +204,14 @@ def degree_shift(S):
 # Auxiliary functions that convert the graded roots and their correction terms into HF^+.
 
 def tau_to_module(tau):
-    '''Computes the Z[U]-module corresponding to a reduced tau-sequence. In the resulting module, multiplication by U lowers the grading by 1.
-     
-        Args:
-            tau(list of int): A list of integers representing a reduced tau-sequence.
+    """Computes the Z[U]-module corresponding to a reduced tau-sequence. In the resulting module, multiplication by U lowers the grading by 1.
 
-        Returns:
-            module(dict): A dictionary of the format {'order of Z[U]-module-summand' : 'list of bottommost gradings of all Z[U]-module-summands of that order'}, encoding a Z[U]-module.
-    '''
+    Args:
+        tau (list[int]): A list of integers representing a reduced tau-sequence.
+
+    Returns:
+        dict: A dictionary of the format {'order of Z[U]-module-summand' : 'list of bottommost gradings of all Z[U]-module-summands of that order'}, encoding a Z[U]-module.
+    """    
     s = tau.index(min(tau))
     module = {0 : [tau[s]]}
     for l in reversed(range(s)):
@@ -229,15 +229,15 @@ def tau_to_module(tau):
     return module
 
 def module_corr_to_neg_HF(module, corr):
-    '''Computes the Z[U]-module corresponding to a given Z[U]-module endowed with a correction term. In the resulting module, multiplication by U lowers the grading by 2.
-     
-        Args:
-            module(dict): A dictionary of the format {'order of Z[U]-module-summand' : 'list of bottommost gradings of all Z[U]-module-summands of that order'}, encoding a Z[U]-module.
-            corr(sym.Rational): The correction term corresponding to the module.
+    """Computes the Z[U]-module corresponding to a given Z[U]-module endowed with a correction term. In the resulting module, multiplication by U lowers the grading by 2.
 
-        Returns:
-            module(dict): A dictionary of the format {'order of Z[U]-module-summand' : 'list of bottommost gradings of all Z[U]-module-summands of that order'}, encoding a Z[U]-module.
-    '''
+    Args:
+        module (dict): A dictionary of the format {'order of Z[U]-module-summand' : 'list of bottommost gradings of all Z[U]-module-summands of that order'}, encoding a Z[U]-module.
+        corr (sym.Rational): The correction term corresponding to the module.
+
+    Returns:
+        dict: A dictionary of the format {'order of Z[U]-module-summand' : 'list of bottommost gradings of all Z[U]-module-summands of that order'}, encoding a Z[U]-module.
+    """    
     for key in module.keys():
         module[key] = [2*i for i in module[key]]
     delta = corr - module[0][0]
@@ -246,14 +246,14 @@ def module_corr_to_neg_HF(module, corr):
     return module
 
 def minus_HF(module):
-    '''Computes the Z[U]-module corresponding to HF^+(Y), given the Z[U]-module corresponding to HF^+(-Y)
-     
-        Args:
-            module(dict): A dictionary of the format {'order of Z[U]-module-summand' : 'list of bottommost gradings of all Z[U]-module-summands of that order'}, encoding a Z[U]-module.
+    """Computes the Z[U]-module corresponding to HF^+(Y), given the Z[U]-module corresponding to HF^+(-Y).
 
-        Returns:
-            module(dict): A dictionary of the format {'order of Z[U]-module-summand' : 'list of bottommost gradings of all Z[U]-module-summands of that order'}, encoding a Z[U]-module.
-    '''
+    Args:
+        module (dict): A dictionary of the format {'order of Z[U]-module-summand' : 'list of bottommost gradings of all Z[U]-module-summands of that order'}, encoding a Z[U]-module.
+
+    Returns:
+        dict: A dictionary of the format {'order of Z[U]-module-summand' : 'list of bottommost gradings of all Z[U]-module-summands of that order'}, encoding a Z[U]-module.
+    """    
     for key in module.keys():
         module[key] = [-(i + key) for i in module[key]]
     return module
@@ -263,14 +263,14 @@ def minus_HF(module):
 # Functions that return the correspondence between spin^c-structures and the reduced tau sequences, Z[U]-modules and HF^+, respectively, and the correction terms.
 
 def spinc_to_tau_corr(C):
-    '''Computes the reduced tau-sequences and the correction terms corresponding to a spin^c-structure on the manifold specified by the plumbing (which has to be negative definite).
-     
-        Args:
-            C(list of int): The coefficients specifying a negative definite plumbing.
+    """Computes the reduced tau-sequences and the correction terms corresponding to a spin^c-structure on the manifold specified by the plumbing (which has to be negative definite).
 
-        Returns:
-            spinc_to_tau_corr(dict): A dictionary of the format {'spin^c-structure' : [reduced tau-sequence, correction term]}.
-    '''
+    Args:
+        C (list[int]): The coefficients specifying a negative definite plumbing.
+
+    Returns:
+        dict: A dictionary of the format {'spin^c-structure' : [reduced tau-sequence, correction term]}.
+    """    
     S = linking_matrix(C)
     n = abs(sym.det(S))
     Alpha, Beta = [abs(C[i]) for i in range(1,len(C),2)], [abs(C[j]) for j in range(2,len(C)+1,2)]
@@ -281,29 +281,29 @@ def spinc_to_tau_corr(C):
     return spinc_to_tau_corr
 
 def spinc_to_module_corr(C):
-    '''Computes the Z[U]-modules (coming from a reduced tau-sequence) and the correction terms corresponding to a spin^c-structure on the manifold specified by the input.
-     
-        Args:
-            C(list of int): The coefficients specifying a negative definite plumbing.
+    """Computes the Z[U]-modules (coming from a reduced tau-sequence) and the correction terms corresponding to a spin^c-structure on the manifold specified by the input.
 
-        Returns:
-            spinc_to_module_corr(dict): A dictionary of the format {'spin^c-structure' : [Z[U]-module, correction term]}.
-    '''
+    Args:
+        C (list[int]): The coefficients specifying a negative definite plumbing.
+
+    Returns:
+        dict: A dictionary of the format {'spin^c-structure' : [Z[U]-module, correction term]}.
+    """    
     spinc_to_module_corr = spinc_to_tau_corr(C)
     for key in spinc_to_module_corr.keys():
         spinc_to_module_corr[key] = [tau_to_module(spinc_to_module_corr[key][0]), spinc_to_module_corr[key][1]]
     return spinc_to_module_corr
 
 def spinc_to_HF(C):
-    '''Computes HF^+ in each spin^c-structure of the manifold specified by the input.
+    """Computes HF^+ in each spin^c-structure of the manifold specified by the input.
     The Z[U]-module-structure of HF^+ is encoded as a dictionary of the format {'order of Z[U]-module-summand' : 'list of bottommost gradings of all Z[U]-module-summands of that order'}.
-     
-        Args:
-            C(list of int): The coefficients specifying a definite plumbing.
 
-        Returns:
-            spinc_to_HF(dict): A dictionary of the format {'spin^c-structure' : 'Z[U]-module-structure of HF^+'}.
-    '''
+    Args:
+        C (list[int]): The coefficients specifying a definite plumbing.
+
+    Returns:
+        dict: A dictionary of the format {'spin^c-structure' : 'Z[U]-module-structure of HF^+'}.
+    """    
     S = linking_matrix(C)
     epsilon = sym.sign(C[0])
     if epsilon == 1:
@@ -323,14 +323,14 @@ def spinc_to_HF(C):
 # Additional functions processing the output of spinc_to_HF.
 
 def print_HF(C):
-    '''Prints HF^+ of the Seifert fibered space specified by a definite plumbing in a more legible manner.
-     
-        Args:
-            C(list of int): Coefficients specifying a definite plumbing.
+    """Prints HF^+ of the Seifert fibered space specified by a definite plumbing in a more legible manner.
 
-        Returns:
-            None: Prints HF^+ of the Seifert fibered space specified.
-    '''
+    Args:
+        C (list[int]): Coefficients specifying a definite plumbing.
+
+    Returns:
+        None: Prints HF^+ of the Seifert fibered space specified.
+    """    
     res = spinc_to_HF(C)
     for key in res.keys():
         if len(key) == 1:
@@ -342,16 +342,17 @@ def print_HF(C):
             for deg in res[key][keykey]:
                 s += ' + Z({})_({})'.format(keykey, deg)
         print(s)
+    return
 
 def correction_terms(C):
-    '''Returns a list of the corrections terms of the Seifert fibered space specified by a definite plumbing.
-     
-        Args:
-            C(list of int): Coefficients specifying a definite plumbing.
+    """Returns a list of the corrections terms of the Seifert fibered space specified by a definite plumbing.
 
-        Returns:
-            L(list of sym.Rational): List of all correction terms of the Seifert fibered space.
-    '''
+    Args:
+        C (list[int]): Coefficients specifying a definite plumbing.
+
+    Returns:
+        list[sym.Rational]: List of all correction terms of the Seifert fibered space.
+    """    
     S = linking_matrix(C)
     epsilon = sym.sign(C[0])
     if epsilon == 1:
@@ -362,14 +363,14 @@ def correction_terms(C):
     return [epsilon*corr[key][1] for key in corr.keys()]
 
 def is_lspace(C):
-    '''Checks whether or not a Seifert fibered space specified by a definite plumbing is an L-space.
-     
-        Args:
-            C(list of int): Coefficients specifying a definite plumbing.
+    """Checks whether or not a Seifert fibered space specified by a definite plumbing is an L-space.
 
-        Returns:
-            bool: Whether or not the Seifert fibered space is an L-space.
-    '''
+    Args:
+        C (list[int]): Coefficients specifying a definite plumbing.
+
+    Returns:
+        bool: Whether or not the Seifert fibered space is an L-space.
+    """    
     res = spinc_to_HF(C)
     for key in res.keys():
         for keykey in res[key].keys():

@@ -386,7 +386,7 @@ class Brieskorn(SFS):
     """This is a subclass of SFS representing Brieskorn homology spheres.
 
     Attributes:
-        coeffs (list[int]): The parameters of the Brieskorn homology sphere specified.
+        params (list[int]): The parameters of the Brieskorn homology sphere specified.
     """    
 
     def __init__(self, *params):
@@ -405,18 +405,18 @@ class Brieskorn(SFS):
         if not min(cond_1, cond_2, cond_3, cond_4):
             raise Exception('A Brieskorn homology sphere should be specified by a list of pairwise coprime integers, each greater than 1 in absolute value, and all of the same sign!')
         super().__init__(*hf.brieskorn(*params))
-        self.coeffs = params
+        self.params = params
 
     def __repr__(self):
-        epsilon = sym.sign(self.coeffs[0])
+        epsilon = sym.sign(self.params[0])
         sign = (lambda x : '' if x > 0 else '-')(epsilon)
-        coeffs_string = ','.join([str(abs(a)) for a in self.coeffs])
+        coeffs_string = ','.join([str(abs(a)) for a in self.params])
         return '{}Sigma({})'.format(sign, coeffs_string)
 
     def __neg__(self):
         """Returns the Brieskorn homology sphere with reversed orientation.
         """
-        return Brieskorn(*map(lambda x : -x, self.coeffs))
+        return Brieskorn(*map(lambda x : -x, self.params))
     
     def to_SFS(self):
         """Transforms the Brieskorn homology sphere specified into a SFS.
@@ -424,6 +424,6 @@ class Brieskorn(SFS):
         Returns:
             soapy.SFS: The SFS homeomorphic to the Brieskorn homology sphere specified.
         """        
-        return SFS(*hf.brieskorn(*self.coeffs))
+        return SFS(*hf.brieskorn(*self.params))
 
 ##############################################################################################################################################################################################

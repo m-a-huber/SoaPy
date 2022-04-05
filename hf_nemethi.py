@@ -25,51 +25,51 @@ def normalize(C):
     new_central_weight = euler_number + sum([1/w for w in new_branch_weights])
     return (euler_number, [int(new_central_weight)] + [i for w in new_branch_weights for i in [w.p, w.q]])
 
-def lens(p,q):
-    """This returns the input string (corresponding to the negative definite plumbing) for the lens space L(p,q), for p and q coprime.
+# def lens(p,q):
+#     """This returns the input string (corresponding to the negative definite plumbing) for the lens space L(p,q), for p and q coprime.
 
-    Args:
-        p (int): The first parameter of L(p,q), a non-zero integer.
-        q (int): The second parameter of L(p,q), a non-zero integer.
+#     Args:
+#         p (int): The first parameter of L(p,q), a non-zero integer.
+#         q (int): The second parameter of L(p,q), a non-zero integer.
 
-    Returns:
-        list[int]: The coefficients of the input string for the lens space L(p,q).
-    """    
-    if abs(p) == 1:
-        return [-1]
-    epsilon = sym.sign(p)
-    p, q = abs(p), q%abs(p)
-    if epsilon == -1:
-        q = p-q
-    if abs(q) == 1:
-        return list(map(int, [-sym.Rational(p,q)]))
-    return list(map(int, [-sym.ceiling(sym.Rational(p,q)),-q,sym.ceiling(sym.Rational(p,q))*q-p]))
+#     Returns:
+#         list[int]: The coefficients of the input string for the lens space L(p,q).
+#     """    
+#     if abs(p) == 1:
+#         return [-1]
+#     epsilon = sym.sign(p)
+#     p, q = abs(p), q%abs(p)
+#     if epsilon == -1:
+#         q = p-q
+#     if abs(q) == 1:
+#         return list(map(int, [-sym.Rational(p,q)]))
+#     return list(map(int, [-sym.ceiling(sym.Rational(p,q)),-q,sym.ceiling(sym.Rational(p,q))*q-p]))
 
-def prism(p,q):
-    """This returns the input string for the prism manifold P(p,q).
+# def prism(p,q):
+#     """This returns the input string for the prism manifold P(p,q).
 
-    Args:
-        p (int): The first parameter of P(p,q), an integer greater than 1 in absolute value.
-        q (int): The second parameter of P(p,q), a non-zero integer.
+#     Args:
+#         p (int): The first parameter of P(p,q), an integer greater than 1 in absolute value.
+#         q (int): The second parameter of P(p,q), a non-zero integer.
 
-    Returns:
-        list[int]: The coefficients of the input string for the prism manifold P(p,q).
-    """    
-    if p <= 0:
-        p, q = -p, -q
-    epsilon = -1
-    if q > 0:
-        epsilon, q = 1, -q
-    r = -(1 - sym.Rational(q,p))
-    c = -sym.ceiling(-r)
-    if p == 1:
-        L = [c,-2,1,-2,1]
-    else:
-        x = sym.Rational(p,p*c+p-q)
-        L = [c,-2,1,-2,1,x.p,x.q]
-    L = [((-epsilon)**i)*L[i] for i in range(len(L))]
-    L[0] = -epsilon*L[0]
-    return list(map(int, L))
+#     Returns:
+#         list[int]: The coefficients of the input string for the prism manifold P(p,q).
+#     """    
+#     if p <= 0:
+#         p, q = -p, -q
+#     epsilon = -1
+#     if q > 0:
+#         epsilon, q = 1, -q
+#     r = -(1 - sym.Rational(q,p))
+#     c = -sym.ceiling(-r)
+#     if p == 1:
+#         L = [c,-2,1,-2,1]
+#     else:
+#         x = sym.Rational(p,p*c+p-q)
+#         L = [c,-2,1,-2,1,x.p,x.q]
+#     L = [((-epsilon)**i)*L[i] for i in range(len(L))]
+#     L[0] = -epsilon*L[0]
+#     return list(map(int, L))
 
 def brieskorn(*A):
     """This returns the input string for the Brieskorn homology sphere Sigma(a_1, ..., a_n).

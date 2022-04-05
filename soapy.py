@@ -72,7 +72,7 @@ class SFS:
 
     def __repr__(self):
         branch_weights_string = ', '.join([str(q) for q in self.branch_weights])
-        return 'Y({}; {})'.format(self.central_weight, branch_weights_string)
+        return f'Y({self.central_weight}; {branch_weights_string})'
     
     def __neg__(self):
         """Returns the SFS with reversed orientation.
@@ -166,7 +166,7 @@ class SFS:
         Returns:
             None: Just prints HF^+ of the SFS specified.
         """        
-        print('HF^+({}):'.format(self))
+        print(f'HF^+({self}):')
         hf.print_HF(self.params)
         return
     
@@ -277,7 +277,7 @@ class Lens(SFS):
         cond_3 = p*q != 0
         if not min(cond_1, cond_2, cond_3):
             raise Exception('A lens space should be specified by a pair of non-zero coprime integers!')
-        super().__init__(*hf.lens(p,q))
+        super().__init__(0,q,p)
         self.p = abs(p)
         self.q = (lambda x : 1 if x==0 else x)((lambda q : q%p if p>0 else (self.p-q)%self.p)(q))
     
@@ -302,7 +302,7 @@ class Lens(SFS):
         return -cls(p,q)
     
     def __repr__(self):
-        return 'L({}, {})'.format(self.p,self.q)
+        return f'L({self.p},{self.q})'
     
     def __neg__(self):
         """Returns the lens space with reversed orientation.
@@ -315,7 +315,7 @@ class Lens(SFS):
         Returns:
             soapy.SFS: The SFS homeomorphic to the lens space specified.
         """        
-        return SFS(*hf.lens(self.p,self.q))
+        return SFS(0,self.q,self.p)
 
     def to_linear_lattice(self, epsilon=-1):
         """Returns the weights of the linear lattice bounded by the lens space specified. By default, the negative definite linear lattice is returned, unless epsilon is set to 1.
@@ -346,7 +346,8 @@ class Prism(SFS):
     """    
     
     def __init__(self, p, q):
-        """The constructor for the Prism subclass. A prism manifold is specified by a pair of non-zero coprime integers p and q, where p is greater than 1.
+        """The constructor for the Prism subclass. A prism manifold is specified by a pair of non-zero coprime integers p and q.
+        Note, however, that P(p,q) is, in fact, homeomorphic to a lens space if p equals 1 in absolute value.
 
         Args:
             p (int): The first parameter of the prism manifold.
@@ -356,16 +357,15 @@ class Prism(SFS):
             Exception: If the parameters are not a pair of non-zero coprime integers p and q, where p is greater than 1.
         """        
         cond_1 = all(isinstance(el, int) for el in (p,q))
-        cond_2 = abs(p) > 1
         cond_3 = sym.gcd(p,q) == 1
-        if not min(cond_1, cond_2, cond_3):
-            raise Exception('A prism manifold should be specified by a pair of coprime integers, with the first parameter greater than 1 in absolute value!')
-        super().__init__(*hf.prism(p,q))
+        if not min(cond_1, cond_3):
+            raise Exception('A prism manifold should be specified by a pair of coprime integers!')
+        super().__init__(-1,-2,1,-2,1,-p,q)
         self.p = abs(p)
         self.q = int(sym.sign(p)*q)
     
     def __repr__(self):
-        return 'P({}, {})'.format(self.p,self.q)
+        return f'P({self.p},{self.q})'
     
     def __neg__(self):
         """Returns the prism manifold with reversed orientation.
@@ -378,7 +378,7 @@ class Prism(SFS):
         Returns:
             soapy.SFS: The SFS homeomorphic to the prism manifold specified.
         """        
-        return SFS(*hf.prism(self.p,self.q))
+        return SFS(-1,-2,1,-2,1,-self.p,self.q)
 
 ##############################################################################################################################################################################################
 
@@ -411,7 +411,7 @@ class Brieskorn(SFS):
         epsilon = sym.sign(self.params[0])
         sign = (lambda x : '' if x > 0 else '-')(epsilon)
         coeffs_string = ','.join([str(abs(a)) for a in self.params])
-        return '{}Sigma({})'.format(sign, coeffs_string)
+        return f'{sign}Sigma({coeffs_string})'
 
     def __neg__(self):
         """Returns the Brieskorn homology sphere with reversed orientation.

@@ -25,11 +25,11 @@
         },
         "sympy": {
             "hashes": [
-                "sha256:2009368e862cd29f1b568dc6572786371a2faa1cd8eb4d313e11a90195d6ee36",
-                "sha256:6cf85a5cfe8fff69553e745b05128de6fc8de8f291965c63871c79701dc6efc9"
+                "sha256:5939eeffdf9e152172601463626c022a2c27e75cf6278de8d401d50c9d58787b",
+                "sha256:df75d738930f6fe9ebe7034e59d56698f29e85f443f743e51e47df0caccc2130"
             ],
             "index": "pypi",
-            "version": "==1.10"
+            "version": "==1.10.1"
         }
     },
     "develop": {}

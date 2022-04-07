@@ -1,10 +1,10 @@
 import sympy as sym
 from sympy.matrices.normalforms import invariant_factors
-import hf_nemethi as hf
-import casson_walker as cw
-import continued_fractions as cf
-import ribbon_obstruction as rib
-from continued_fractions import *
+from . import hf_nemethi as hf
+from . import casson_walker as cw
+from . import continued_fractions as cf
+from . import ribbon_obstruction as rib
+from .continued_fractions import *
 
 ##############################################################################################################################################################################################
 

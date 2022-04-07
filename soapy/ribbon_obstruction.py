@@ -1,5 +1,5 @@
 import sympy as sym
-import hf_nemethi as hf
+from . import hf_nemethi as hf
 
 def ribbon_obstruction_corr(L,M):
      """This checks whether a pair of 3-manifolds with given lists of correction terms passes the d-invariant obstruction to the existence of a ribbon cobordism between them.

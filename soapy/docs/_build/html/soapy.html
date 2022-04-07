@@ -1,0 +1,563 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>soapy module &#8212; SoaPy  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Welcome to SoaPy’s documentation!" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-soapy">
+<span id="soapy-module"></span><h1>soapy module<a class="headerlink" href="#module-soapy" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="soapy.SFS">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">soapy.</span></span><span class="sig-name descname"><span class="pre">SFS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#soapy.SFS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This is a class for working with orientable Seifert fibered spaces (SFS) whose base orbifold is the 2-sphere.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="soapy.SFS.params">
+<span class="sig-name descname"><span class="pre">params</span></span><a class="headerlink" href="#soapy.SFS.params" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of integer coefficients representing the SFS specified. These do not necessarily coincide with the input parameters, but rather are normalized in such a way that the corresponding integer surgery diagram is definite.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list[int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="soapy.SFS.central_weight">
+<span class="sig-name descname"><span class="pre">central_weight</span></span><a class="headerlink" href="#soapy.SFS.central_weight" title="Permalink to this definition">¶</a></dt>
+<dd><p>The weight of the central vertex of the normalized surgery description of the SFS specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="soapy.SFS.branch_weights">
+<span class="sig-name descname"><span class="pre">branch_weights</span></span><a class="headerlink" href="#soapy.SFS.branch_weights" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tuple containing the rational surgery coefficients of the exceptional fibers of the SFS specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>tuple(sym.Rational)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="soapy.SFS.fractional_branch_weights">
+<span class="sig-name descname"><span class="pre">fractional_branch_weights</span></span><a class="headerlink" href="#soapy.SFS.fractional_branch_weights" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tuple containing the fractional parts of the branch weights.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>tuple(sym.Rational)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="soapy.SFS.euler_number">
+<span class="sig-name descname"><span class="pre">euler_number</span></span><a class="headerlink" href="#soapy.SFS.euler_number" title="Permalink to this definition">¶</a></dt>
+<dd><p>The orbifold Euler number of the normalized surgery description of the SFS specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>sym.Rational</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="soapy.SFS.exceptional_fibers">
+<span class="sig-name descname"><span class="pre">exceptional_fibers</span></span><a class="headerlink" href="#soapy.SFS.exceptional_fibers" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of exceptional fibers of the normalized surgery description of the SFS specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="soapy.SFS.from_plumbing">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_plumbing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">central_weight</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">lists_of_coeffs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#soapy.SFS.from_plumbing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allows one to construct a soapy.SFS object from an integer plumbing description, all of whose weights are non-zero.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>central_weight</strong> (<em>int</em>) – The weight of the central vertex of the plumbing tree.</p></li>
+<li><p><strong>*lists_of_coeffs</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – A variable number of lists of weights of the branches, each read starting from the central vertex</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>Exception</strong> – If any of the weights specified is zero.</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The SFS corresponding to the integer plumbing description specified.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#soapy.SFS" title="soapy.SFS">soapy.SFS</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="soapy.SFS.to_plumbing">
+<span class="sig-name descname"><span class="pre">to_plumbing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soapy.SFS.to_plumbing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the definite plumbing (equivalently: an integral surgery description) corresponding to the SFS specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A tuple whose first elements is the central weight, followed by the lists of integer weights on the branches (read starting from the central vertex).</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>tuple(int, lists[int])</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="soapy.SFS.seifert_invariants">
+<span class="sig-name descname"><span class="pre">seifert_invariants</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soapy.SFS.seifert_invariants" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the Seifert invariants of the SFS specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A tuple of the format (Euler number, (tuple of fractional branch weights)).</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>tuple(sym.Rational, tuple(sy.Rational))</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="soapy.SFS.linking_matrix">
+<span class="sig-name descname"><span class="pre">linking_matrix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soapy.SFS.linking_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the linking matrix of the SFS specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A SymPy-matrix with SymPy-integers as entries, representing the linking matrix of the integer plumbing corresponding to the SFS specified.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>sym.Matrix</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="soapy.SFS.first_homology">
+<span class="sig-name descname"><span class="pre">first_homology</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soapy.SFS.first_homology" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the first homology of the SFS specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The orders of the non-trivial cyclic summands of the first homology of the SFS specified.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>tuple(int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="soapy.SFS.order_of_first_homology">
+<span class="sig-name descname"><span class="pre">order_of_first_homology</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soapy.SFS.order_of_first_homology" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the order of the first homology of the SFS specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The order of the first homology of the SFS specified.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="soapy.SFS.spinc_to_HF">
+<span class="sig-name descname"><span class="pre">spinc_to_HF</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soapy.SFS.spinc_to_HF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes HF^+ in each spin^c-structure of the SFS specified. The Z[U]-module-structure of HF^+ is encoded as a dictionary of the format {‘order of Z[U]-module-summand’ : ‘list of bottommost gradings of all Z[U]-module-summands of that order’}.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A dictionary of the format {‘spin^c-structure’ : ‘Z[U]-module-structure of HF^+’}.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="soapy.SFS.print_HF">
+<span class="sig-name descname"><span class="pre">print_HF</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soapy.SFS.print_HF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints HF^+ of the SFS specified by a definite plumbing in a more legible manner.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Just prints HF^+ of the SFS specified.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="soapy.SFS.correction_terms">
+<span class="sig-name descname"><span class="pre">correction_terms</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soapy.SFS.correction_terms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of the corrections terms of the SFS specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List of all correction terms of the SFS specified.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list[sym.Rational]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="soapy.SFS.is_lspace">
+<span class="sig-name descname"><span class="pre">is_lspace</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soapy.SFS.is_lspace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether or not the SFS specified is a Heegaard Floer L-space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Whether or not the the SFS specified is an L-space.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="soapy.SFS.casson_walker">
+<span class="sig-name descname"><span class="pre">casson_walker</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soapy.SFS.casson_walker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the Casson-Walker invariant of the SFS specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The Casson-Walker invariant of the SFS specified.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>sym.Rational</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="soapy.SFS.is_lens_space">
+<span class="sig-name descname"><span class="pre">is_lens_space</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soapy.SFS.is_lens_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether or not the SFS specified is homeomorphic to a lens space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Whether or not the the SFS specified is homeomorphic to a lens space.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="soapy.SFS.to_lens_space">
+<span class="sig-name descname"><span class="pre">to_lens_space</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soapy.SFS.to_lens_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms the SFS specified into the corresponding lens space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If the SFS specified is not homeomorphic to any lens space.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Lens space homeomorphic to the SFS specified.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#soapy.Lens" title="soapy.Lens">soapy.Lens</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="soapy.SFS.is_prism_mfld">
+<span class="sig-name descname"><span class="pre">is_prism_mfld</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soapy.SFS.is_prism_mfld" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether or not the SFS specified is homeomorphic to a prism manifold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Whether or not the the SFS specified is homeomorphic to a prism manifold.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="soapy.SFS.to_prism_mfld">
+<span class="sig-name descname"><span class="pre">to_prism_mfld</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soapy.SFS.to_prism_mfld" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms the SFS specified into the corresponding prism manifold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If the SFS specified is not homeomorphic to any prism manifold.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Prism manifold homeomorphic to the SFS specified.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#soapy.Prism" title="soapy.Prism">soapy.Prism</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="soapy.Lens">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">soapy.</span></span><span class="sig-name descname"><span class="pre">Lens</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#soapy.Lens" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#soapy.SFS" title="soapy.SFS"><code class="xref py py-class docutils literal notranslate"><span class="pre">soapy.SFS</span></code></a></p>
+<p>This is a subclass of SFS representing lens spaces.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="soapy.Lens.p">
+<span class="sig-name descname"><span class="pre">p</span></span><a class="headerlink" href="#soapy.Lens.p" title="Permalink to this definition">¶</a></dt>
+<dd><p>The first parameter of the lens space specified, normalized to be greater than zero.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="soapy.Lens.q">
+<span class="sig-name descname"><span class="pre">q</span></span><a class="headerlink" href="#soapy.Lens.q" title="Permalink to this definition">¶</a></dt>
+<dd><p>The second parameter of the lens space specified, normalized so that p &gt; q &gt; 0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="soapy.Lens.from_linear_lattice">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_linear_lattice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#soapy.Lens.from_linear_lattice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allows one to construct a soapy.Lens object from a linear lattice specifying a lens space, all of whose weights are non-zero.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>*params</strong> (<em>int</em>) – A variable number of integer weights of the linear lattice, read starting from either end.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>Exception</strong> – If any of the weights specified is zero.</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The lens space corresponding to the linear lattice specified.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#soapy.Lens" title="soapy.Lens">soapy.Lens</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="soapy.Lens.to_SFS">
+<span class="sig-name descname"><span class="pre">to_SFS</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soapy.Lens.to_SFS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms the lens space specified into a SFS.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The SFS homeomorphic to the lens space specified.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#soapy.SFS" title="soapy.SFS">soapy.SFS</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="soapy.Lens.to_linear_lattice">
+<span class="sig-name descname"><span class="pre">to_linear_lattice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#soapy.Lens.to_linear_lattice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the weights of the linear lattice bounded by the lens space specified. By default, the negative definite linear lattice is returned, unless epsilon is set to 1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>epsilon</strong> (<em>int</em><em>, </em><em>optional</em>) – The sign of definiteness of the linear lattice to be returned. Defaults to -1.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>Exception</strong> – If epsilon is not 1 in absolute value.</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A tuple containing the weights of the linear lattice bounded by the lens space specified.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>tuple(int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="soapy.Prism">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">soapy.</span></span><span class="sig-name descname"><span class="pre">Prism</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#soapy.Prism" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#soapy.SFS" title="soapy.SFS"><code class="xref py py-class docutils literal notranslate"><span class="pre">soapy.SFS</span></code></a></p>
+<p>This is a subclass of SFS representing prism manifolds.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="soapy.Prism.p">
+<span class="sig-name descname"><span class="pre">p</span></span><a class="headerlink" href="#soapy.Prism.p" title="Permalink to this definition">¶</a></dt>
+<dd><p>The first parameter of the prism manifold specified, normalized to be greater than 1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="soapy.Prism.q">
+<span class="sig-name descname"><span class="pre">q</span></span><a class="headerlink" href="#soapy.Prism.q" title="Permalink to this definition">¶</a></dt>
+<dd><p>The second parameter of the prism manifold specified; can be any non-zero integer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="soapy.Prism.to_SFS">
+<span class="sig-name descname"><span class="pre">to_SFS</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soapy.Prism.to_SFS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms the prism manifold specified into a SFS.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The SFS homeomorphic to the prism manifold specified.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#soapy.SFS" title="soapy.SFS">soapy.SFS</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="soapy.Brieskorn">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">soapy.</span></span><span class="sig-name descname"><span class="pre">Brieskorn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#soapy.Brieskorn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#soapy.SFS" title="soapy.SFS"><code class="xref py py-class docutils literal notranslate"><span class="pre">soapy.SFS</span></code></a></p>
+<p>This is a subclass of SFS representing Brieskorn homology spheres.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="soapy.Brieskorn.params">
+<span class="sig-name descname"><span class="pre">params</span></span><a class="headerlink" href="#soapy.Brieskorn.params" title="Permalink to this definition">¶</a></dt>
+<dd><p>The parameters of the Brieskorn homology sphere specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list[int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="soapy.Brieskorn.to_SFS">
+<span class="sig-name descname"><span class="pre">to_SFS</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#soapy.Brieskorn.to_SFS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms the Brieskorn homology sphere specified into a SFS.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The SFS homeomorphic to the Brieskorn homology sphere specified.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#soapy.SFS" title="soapy.SFS">soapy.SFS</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SoaPy</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">soapy module</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to SoaPy’s documentation!</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, m-a-huber.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/soapy.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

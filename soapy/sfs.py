@@ -15,9 +15,6 @@ class SFS:
         params (list[int]): List of integer coefficients representing the SFS specified. These do not necessarily coincide with the input parameters, but rather are normalized in such a way that the corresponding integer surgery diagram is definite.
         central_weight (int): The weight of the central vertex of the normalized surgery description of the SFS specified.
         branch_weights (tuple(sym.Rational)): Tuple containing the rational surgery coefficients of the exceptional fibers of the SFS specified.
-        fractional_branch_weights (tuple(sym.Rational)): Tuple containing the fractional parts of the branch weights.
-        euler_number (sym.Rational): The orbifold Euler number of the normalized surgery description of the SFS specified.
-        exceptional_fibers (int): The number of exceptional fibers of the normalized surgery description of the SFS specified.
     """    
     
     def __init__(self, *params):
@@ -42,9 +39,6 @@ class SFS:
         self.params = tuple(hf.normalize(params)[1])
         self.central_weight = self.params[0]
         self.branch_weights = tuple(sym.Rational(self.params[i], self.params[i+1]) for i in range(1,len(self.params),2))
-        self.fractional_branch_weights = tuple((1/w) - sym.floor(1/w) for w in self.branch_weights)
-        self.euler_number = self.central_weight - sum([1/w for w in self.branch_weights])
-        self.exceptional_fibers = len(self.branch_weights)
     
     @classmethod
     def from_plumbing(cls, central_weight, *lists_of_coeffs):
@@ -85,8 +79,8 @@ class SFS:
         """        
         if isinstance(other, SFS):
             if not max(self.is_lens_space(), other.is_lens_space()):
-                seifert_self = (self.euler_number, sorted(self.fractional_branch_weights))
-                seifert_other = (other.euler_number, sorted(other.fractional_branch_weights))
+                seifert_self = (self.euler_number(), sorted(self.fractional_branch_weights()))
+                seifert_other = (other.euler_number(), sorted(other.fractional_branch_weights()))
                 return seifert_self == seifert_other
             if self.is_lens_space() and other.is_lens_space():
                 self, other = self.to_lens_space(), other.to_lens_space()
@@ -110,6 +104,30 @@ class SFS:
                 return False
             return self <= other
         return False
+
+    def fractional_branch_weights(self):
+        """Returns the fractional parts of the framings on the exceptional fibers.
+
+        Returns:
+            tuple(sym.Rational): Tuple containing the fractional parts of the branch weights.
+        """
+        return tuple((1/w) - sym.floor(1/w) for w in self.branch_weights)
+    
+    def euler_number(self):
+        """Returns the orbifold Euler number of the SFS specified.
+
+        Returns:
+            sym.Rational: The orbifold Euler number of the normalized surgery description of the SFS specified.
+        """
+        return self.central_weight - sum([1/w for w in self.branch_weights])
+    
+    def number_of_exceptional_fibers(self):
+        """Returns the number of exceptional fibers of the SFS specified.
+
+        Returns:
+            int: The number of exceptional fibers of the normalized surgery description of the SFS specified.
+        """
+        return len(self.branch_weights)
     
     def to_plumbing(self):
         """Returns the definite plumbing (equivalently: an integral surgery description) corresponding to the SFS specified.
@@ -124,9 +142,9 @@ class SFS:
         """Returns the Seifert invariants of the SFS specified.
 
         Returns:
-            tuple(sym.Rational, tuple(sy.Rational)): A tuple of the format (Euler number, (tuple of fractional branch weights)).
+            tuple(sym.Rational, tuple(sym.Rational)): A tuple of the format (Euler number, (tuple of fractional branch weights)).
         """        
-        return (self.euler_number, self.fractional_branch_weights)
+        return (self.euler_number(), self.fractional_branch_weights())
     
     def linking_matrix(self):
         """Returns the linking matrix of the SFS specified.
@@ -206,7 +224,7 @@ class SFS:
         Returns:
             bool: Whether or not the the SFS specified is homeomorphic to a lens space.
         """        
-        return self.exceptional_fibers <= 2
+        return self.number_of_exceptional_fibers() <= 2
     
     def to_lens_space(self):
         """Transforms the SFS specified into the corresponding lens space.
@@ -220,9 +238,9 @@ class SFS:
         if not self.is_lens_space():
             raise Exception('The SFS specified is not homeomorphic to a lens space!')
         coeffs = [sym.Rational(self.central_weight)]
-        if self.exceptional_fibers >= 1:
+        if self.number_of_exceptional_fibers() >= 1:
             coeffs += cf.number_to_neg_cont_frac(self.branch_weights[0].p, self.branch_weights[0].q)
-        if self.exceptional_fibers == 2:
+        if self.number_of_exceptional_fibers() == 2:
             coeffs.reverse()
             coeffs += cf.number_to_neg_cont_frac(self.branch_weights[1].p, self.branch_weights[1].q)
         frac = -cf.number_from_neg_cont_frac(*coeffs)
@@ -234,7 +252,7 @@ class SFS:
         Returns:
             bool: Whether or not the the SFS specified is homeomorphic to a prism manifold.
         """        
-        return self.fractional_branch_weights.count(sym.Rational(1,2)) >= 2 and self.exceptional_fibers == 3
+        return self.fractional_branch_weights().count(sym.Rational(1,2)) >= 2 and self.number_of_exceptional_fibers() == 3
     
     def to_prism_mfld(self):
         """Transforms the SFS specified into the corresponding prism manifold.
@@ -247,7 +265,7 @@ class SFS:
         """        
         if not self.is_prism_mfld():
             raise Exception('The SFS specified is not homeomorphic to a prism manifold!')
-        return Prism((self.euler_number).q, (self.euler_number).p)
+        return Prism((self.euler_number()).q, (self.euler_number()).p)
 
 three_sphere = SFS(1)
 poincare_sphere = SFS(-2,-5,4,-3,2,-2,1)
@@ -386,37 +404,37 @@ class Brieskorn(SFS):
     """This is a subclass of SFS representing Brieskorn homology spheres.
 
     Attributes:
-        params (list[int]): The parameters of the Brieskorn homology sphere specified.
+        coeffs (list[int]): The coefficients of the Brieskorn homology sphere specified.
     """    
 
-    def __init__(self, *params):
-        """The constructor for the Brieskorn subclass. A Brieskorn homology sphere is specified by a list of integers a_1, .., a_n that are pairwise coprime, each greater than 1 in absolute value, and all of the same sign. If all the parameters are negative, this returns -Sigma(a_1, ...,a_n) (i.e. with orientation reversed).
+    def __init__(self, *coeffs):
+        """The constructor for the Brieskorn subclass. A Brieskorn homology sphere is specified by a list of integers a_1, .., a_n that are pairwise coprime, each greater than 1 in absolute value, and all of the same sign. If all the coefficients are negative, this returns -Sigma(a_1, ...,a_n) (i.e. with orientation reversed).
 
         Args:
-            *params (int): The parameters specifying a Brieskorn homology sphere.
+            *coeffs (int): The coefficients specifying a Brieskorn homology sphere.
 
         Raises:
-            Exception: If the parameters are not a list of integers a_1, .., a_n that are pairwise coprime, each greater than 1 in absolute value, and all of the same sign.
+            Exception: If the coefficients are not a list of integers a_1, .., a_n that are pairwise coprime, each greater than 1 in absolute value, and all of the same sign.
         """        
-        cond_1 = all(isinstance(el, int) for el in params)
-        cond_2 = min(map(abs, params)) > 1
-        cond_3 = len(set(map(sym.sign, params))) == 1
-        cond_4 = sym.lcm_list(params) == sym.prod(params)
+        cond_1 = all(isinstance(el, int) for el in coeffs)
+        cond_2 = min(map(abs, coeffs)) > 1
+        cond_3 = len(set(map(sym.sign, coeffs))) == 1
+        cond_4 = sym.lcm_list(coeffs) == sym.prod(coeffs)
         if not min(cond_1, cond_2, cond_3, cond_4):
             raise Exception('A Brieskorn homology sphere should be specified by a list of pairwise coprime integers, each greater than 1 in absolute value, and all of the same sign!')
-        super().__init__(*hf.brieskorn(*params))
-        self.params = params
+        super().__init__(*hf.brieskorn(*coeffs))
+        self.coeffs = coeffs
 
     def __repr__(self):
-        epsilon = sym.sign(self.params[0])
+        epsilon = sym.sign(self.coeffs[0])
         sign = (lambda x : '' if x > 0 else '-')(epsilon)
-        coeffs_string = ','.join([str(abs(a)) for a in self.params])
+        coeffs_string = ','.join([str(abs(a)) for a in self.coeffs])
         return f'{sign}Sigma({coeffs_string})'
 
     def __neg__(self):
         """Returns the Brieskorn homology sphere with reversed orientation.
         """
-        return Brieskorn(*map(lambda x : -x, self.params))
+        return Brieskorn(*map(lambda x : -x, self.coeffs))
     
     def to_SFS(self):
         """Transforms the Brieskorn homology sphere specified into a SFS.
@@ -424,6 +442,6 @@ class Brieskorn(SFS):
         Returns:
             soapy.SFS: The SFS homeomorphic to the Brieskorn homology sphere specified.
         """        
-        return SFS(*hf.brieskorn(*self.params))
+        return SFS(*hf.brieskorn(*self.coeffs))
 
 ##############################################################################################################################################################################################

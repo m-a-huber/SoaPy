@@ -16,11 +16,11 @@ Lastly, the package comes with built-in functions to check if a given SFS is hom
 
 ---
 
-For instructions and underlying mathematical conventions, refer to the PDF (to be added).
+For instructions and underlying mathematical conventions, refer to the PDF.
 
 ---
 
-For required packages, refer to `requirements.txt`. Alternatively, you can use the 'pipenv' package manager and the Pipfile included to import the package as follows.
+For required packages, refer to `requirements.txt`. Alternatively, you can use the "pipenv" package manager and the Pipfile included to install a virtual environment and import the package as follows.
 ```
 cd SoaPy
 pipenv install

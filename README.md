@@ -25,5 +25,6 @@ For required packages, refer to `requirements.txt`. Alternatively, you can use t
 cd SoaPy
 pipenv install
 pipenv shell
-import soapy as sp
+python3
+>>> import soapy as sp
 ```

@@ -34,9 +34,9 @@ class SFS:
         cond_2 = len(params)%2 == 1
         cond_3 = all([sym.gcd(params[i], params[i+1]) == 1 for i in range(1,len(params),2)])
         cond_4 = all(el!=0 for el in params[1:])
-        cond_5 = hf.normalize(params)[0] != 0
         if not min(cond_1, cond_2, cond_3, cond_4):
             raise Exception('A SFS should be specified by an odd number of integers, with each exceptional fiber specified by a pair of non-zero coprime integers!')
+        cond_5 = hf.normalize(params)[0] != 0
         if not cond_5:
             raise Exception('The SFS specified is not a rational homology sphere!')
         self.params = tuple(hf.normalize(params)[1])
@@ -153,7 +153,7 @@ class SFS:
         return int(abs(sym.det(self.linking_matrix())))
     
     def spinc_to_HF(self):
-        """Computes HF^+ in each spin^c-structure of the SFS specified. The Z[U]-module-structure of HF^+ is encoded as a dictionary of the format {'order of Z[U]-module-summand' : 'list of bottommost gradings of all Z[U]-module-summands of that order'}.
+        """Computes HF^+ of the SFS specified in each spin^c-structure. The Z[U]-module-structure of HF^+ is encoded as a dictionary of the format {'order of Z[U]-module-summand' : 'list of bottommost gradings of all Z[U]-module-summands of that order'}.
 
         Returns:
             dict: A dictionary of the format {'spin^c-structure' : 'Z[U]-module-structure of HF^+'}.
@@ -161,7 +161,7 @@ class SFS:
         return hf.spinc_to_HF(self.params)
     
     def print_HF(self):
-        """Prints HF^+ of the SFS specified by a definite plumbing in a more legible manner.
+        """Prints HF^+ of the SFS specified in a more legible manner.
 
         Returns:
             None: Just prints HF^+ of the SFS specified.
@@ -341,8 +341,8 @@ class Prism(SFS):
     """This is a subclass of SFS representing prism manifolds.
 
     Attributes:
-        p (int): The first parameter of the prism manifold specified, normalized to be greater than 1.
-        q (int): The second parameter of the prism manifold specified; can be any non-zero integer.
+        p (int): The first parameter of the prism manifold specified, normalized to be greater than 0.
+        q (int): The second parameter of the prism manifold specified.
     """    
     
     def __init__(self, p, q):

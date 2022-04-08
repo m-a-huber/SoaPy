@@ -14,7 +14,11 @@ Moreover, the package allows one to check if a given pair Y\_1 and Y\_2 of SFS p
 
 Lastly, the package comes with built-in functions to check if a given SFS is homeomorphic to a lens space or a prism manifold, and if two different parametrizations of a SFS actually  represent the same SFS.
 
+---
+
 For instructions and underlying mathematical conventions, refer to the PDF (to be added).
+
+---
 
 For required packages, refer to `requirements.txt`. Alternatively, you can use the 'pipenv' package manager and the Pipfile included to import the package as follows.
 ```

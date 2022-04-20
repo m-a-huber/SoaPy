@@ -1,12 +1,11 @@
 import sympy as sym
 from sympy.matrices.normalforms import invariant_factors
-from . import hf_nemethi as hf
-from . import casson_walker as cw
-from . import continued_fractions as cf
-from . import ribbon_obstruction as rib
-from .continued_fractions import *
+from soapy import hf_nemethi as hf
+from soapy import casson_walker as cw
+from soapy import continued_fractions as cf
+from soapy import ribbon_obstruction as rib
 
-##############################################################################################################################################################################################
+###############################################################################################
 
 class SFS:
     """This is a class for working with orientable Seifert fibered spaces (SFS) whose base orbifold is the 2-sphere.
@@ -267,10 +266,12 @@ class SFS:
             raise Exception('The SFS specified is not homeomorphic to a prism manifold!')
         return Prism((self.euler_number()).q, (self.euler_number()).p)
 
+# Define default variables that represent S^3 and the Poincaré homology sphere, respectively.
+
 three_sphere = SFS(1)
 poincare_sphere = SFS(-2,-5,4,-3,2,-2,1)
 
-##############################################################################################################################################################################################
+###############################################################################################
 
 class Lens(SFS):
     """This is a subclass of SFS representing lens spaces.
@@ -353,7 +354,7 @@ class Lens(SFS):
             return tuple(cf.number_to_neg_cont_frac(-self.p, self.q))
         return tuple(cf.number_to_neg_cont_frac(self.p, self.p - self.q))
 
-##############################################################################################################################################################################################
+###############################################################################################
 
 class Prism(SFS):
     """This is a subclass of SFS representing prism manifolds.
@@ -398,7 +399,7 @@ class Prism(SFS):
         """        
         return SFS(-1,-2,1,-2,1,-self.p,self.q)
 
-##############################################################################################################################################################################################
+###############################################################################################
 
 class Brieskorn(SFS):
     """This is a subclass of SFS representing Brieskorn homology spheres.
@@ -444,4 +445,4 @@ class Brieskorn(SFS):
         """        
         return SFS(*hf.brieskorn(*self.coeffs))
 
-##############################################################################################################################################################################################
+###############################################################################################

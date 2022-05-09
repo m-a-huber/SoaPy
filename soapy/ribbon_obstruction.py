@@ -14,7 +14,7 @@ def ribbon_obstruction_corr(L,M):
      u = sym.Rational(len(M),len(L))
      if u.is_integer and sym.ntheory.primetest.is_square(u):
           for d in L:
-               if M.count(d) > sym.sqrt(u)*L.count(d):
+               if M.count(d) < sym.sqrt(u)*L.count(d):
                     return False
           return True
      else:

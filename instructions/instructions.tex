@@ -1,0 +1,317 @@
+%------------------------------------------------------------------------------
+% Beginning of journal.tex
+%------------------------------------------------------------------------------
+%
+% AMS-LaTeX version 2 sample file for journals, based on amsart.cls.
+%
+%        ***     DO NOT USE THIS FILE AS A STARTER.      ***
+%        ***  USE THE JOURNAL-SPECIFIC *.TEMPLATE FILE.  ***
+%
+% Replace amsart by the documentclass for the target journal, e.g., tran-l.
+%
+\documentclass[12pt]{amsart}
+
+%     If your article includes graphics, uncomment this command.
+\usepackage{graphicx}
+\usepackage{cleveref}
+\usepackage{color}
+\usepackage{units}
+\usepackage{enumitem}
+\usepackage{tabularx}
+  \newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\usepackage{ltablex}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{xca}[theorem]{Exercise}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem*{remark*}{Remark}
+\newtheorem*{example*}{Example}
+\newtheorem*{examples*}{Examples}
+
+\numberwithin{equation}{section}
+
+%    Absolute value notation
+\newcommand{\abs}[1]{\lvert#1\rvert}
+
+%    Blank box placeholder for figures (to avoid requiring any
+%    particular graphics capabilities for printing this document).
+\newcommand{\blankbox}[2]{%
+  \parbox{\columnwidth}{\centering
+%    Set fboxsep to 0 so that the actual size of the box will match the
+%    given measurements more closely.
+    \setlength{\fboxsep}{0pt}%
+    \fbox{\raisebox{0pt}[#2]{\hspace{#1}}}%
+  }%
+}
+
+\setlength{\textwidth}{\paperwidth}
+\addtolength{\textwidth}{-6cm}
+\calclayout
+
+\newcommand{\hfp}{\mathrm{HF}^{+}}
+\newcommand{\Z}{\mathbb{Z}}
+
+\begin{document}
+
+\title{Instructions for SoaPy}
+\vspace*{-3.5cm}
+\maketitle
+\thispagestyle{empty}
+
+This package is intended to facilitate computations involving Seifert fibered rational homology spheres (henceforth called `SFS').
+For notations and conventions of the $3$-manifolds and their invariants, see ``Conventions'' below.
+Part of the code is based on code written for MAGMA by Karakurt \cite{Karakurt}, which in turn is an implementation of Némethi's algorithm to compute $\hfp$ \cite{Nemethi}. 
+
+The package contains the class \texttt{soapy.SFS}, as well as its subclasses \texttt{soapy.Lens}, \texttt{soapy.Prism} and \texttt{soapy.Brieskorn}.
+
+\section*{\texttt{soapy.SFS}}
+
+An object representing the SFS $Y(e;a_{1}/b_{1},\dots,a_{n}/b_{n})$ (where, $a_{i},b_{i}\neq 0$ for $i=1,\dots,n$.) is created by passing the tuple \texttt{(e;a\_1/b\_1,\dots,a\_n/b\_n)} to the constructor of \texttt{soapy.SFS}.
+
+Alternatively, this can be done by passing the function \texttt{soapy.SFS.from\_plumbing} the weights of a plumbing description of $Y(e;a_{1}/b_{1},\dots,a_{n}/b_{n})$, as specified by a star-shaped tree with integer weights (see ``Example'' below).
+
+If \texttt{Y} is a \texttt{soapy.SFS} object, calling \texttt{-Y} corresponds to orientation-reversal.
+Two objects are equal in this class if they represent orientation-preservingly homeomorphic $3$-manifolds.
+An object is `less than or equal to' another, if the pair passes the correction term obstruction to there existing a ribbon rational homology cobordism from the first object to the other (see ``Obstruction'' below).
+An object is `less than' another if it is less than, but not equal, to the other.
+
+The class contains the objects \texttt{soapy.three\_sphere} and \texttt{soapy.poincare\_sphere}, representing $S^{3}$ and the Poincaré homology sphere, respectively.
+
+\bigskip
+
+\textbf{List of attributes:}
+
+\renewcommand{\arraystretch}{1.5}%
+\begin{tabularx}{\linewidth}{X X}
+\hline
+\texttt{params} & List of integer coefficients representing the SFS specified. These do not necessarily coincide with the input parameters, but rather are normalized in such a way that the corresponding integer surgery diagram is definite.\\
+\hline
+\texttt{central\_weight} & The weight of the central vertex of the normalized surgery description of the SFS specified.\\
+\hline
+\texttt{branch\_weights} & Tuple containing the rational surgery coefficients of the exceptional fibers of the SFS specified.\\
+\hline
+\end{tabularx}
+
+\newpage
+
+\textbf{List of methods:}
+
+\renewcommand{\arraystretch}{1.5}%
+\begin{tabularx}{\linewidth}{X X}\\
+\hline
+\texttt{fractional\_branch\_weights()} & Returns the fractional parts of the framings on the exceptional fibers.\\
+\hline
+\texttt{euler\_number()} & Returns the orbifold Euler number of the SFS specified.\\
+\hline
+\texttt{number\_of\_exceptional\_fibers()} & Returns the number of exceptional fibers of the SFS specified.\\
+\hline
+\texttt{to\_plumbing()} & Returns the definite plumbing (equivalently: an integral surgery description) corresponding to the SFS specified.\\
+\hline
+\texttt{seifert\_invariants()} & Returns the Seifert invariants of the SFS specified.\\
+\hline
+\texttt{linking\_matrix()} & Returns the linking matrix of the SFS specified.\\
+\hline
+\texttt{first\_homology()} & Returns the first homology of the SFS specified.\\
+\hline
+\texttt{order\_of\_first\_homology()} & Returns the order of the first homology of the SFS specified.\\
+\hline
+\texttt{spinc\_to\_HF()} & Computes $\hfp$ of the SFS specified in each spin$^c$-structure. The $\Z[U]$-module-structure of $\hfp$ is encoded as a dictionary of the format \{`order of $\Z[U]$-module-summand' : `list of bottommost gradings of all $\Z[U]$-module-summands of that order'\}.\\
+\hline
+\texttt{print\_HF()} & Prints $\hfp$ of the SFS specified in a more legible manner.\\
+\hline
+\texttt{correction\_terms()} & Returns a list of the corrections terms of the SFS specified.\\
+\hline
+\texttt{is\_lspace()} & Checks whether or not the SFS specified is a Heegaard Floer L-space.\\
+\hline
+\texttt{casson\_walker()} & Computes the Casson-Walker invariant of the SFS specified.\\
+\hline
+\texttt{is\_lens\_space()} & Checks whether or not the SFS specified is homeomorphic to a lens space.\\
+\hline
+\texttt{to\_lens\_space()} & Transforms the SFS specified into the corresponding lens space.\\
+\hline
+\texttt{is\_prism\_mfld()} & Checks whether or not the SFS specified is homeomorphic to a prism manifold.\\
+\hline
+\texttt{to\_prism\_mfld()} & Transforms the SFS specified into the corresponding prism manifold.\\
+\hline
+\end{tabularx}
+
+\bigskip
+
+\textbf{List of functions:}
+
+\renewcommand{\arraystretch}{1.5}%
+\begin{tabularx}{\linewidth}{X X}
+\hline
+\texttt{number\_to\_neg\_cont\_frac} & This computes the coefficients of the (-)-continued fraction expansion of a rational number $p/q$, for $p$, $q$ coprime.\\
+\hline
+\texttt{number\_to\_pos\_cont\_frac} & This computes the coefficients of the (+)-continued fraction expansion of a rational number $p/q$, for $p$, $q$ coprime.\\
+\hline
+\texttt{number\_from\_neg\_cont\_frac} & This computes (-)-continued fraction of an arbitrary list of coefficients.\\
+\hline
+\texttt{number\_from\_pos\_cont\_frac} & This computes (+)-continued fraction of an arbitrary list of coefficients.\\
+\hline
+\end{tabularx}
+
+\newpage
+
+\section*{\texttt{soapy.Lens}}
+
+This is a subclass of \texttt{soapy.SFS} representing lens spaces.
+In particular, any object belonging to this subclass inherits all methods defined for objects belonging to \texttt{soapy.SFS}.
+
+An object representing the lens space $L(p,q)$ is created by passing the parameters \texttt{p} and \texttt{q} to the constructor of \texttt{soapy.Lens}.
+Alternatively, this can be done by passing the function \texttt{soapy.Lens.from\_linear\_lattice} the weights of a linear lattice giving a plumbing description of $L(p,q)$.
+
+\bigskip
+
+\textbf{List of attributes:}
+
+\renewcommand{\arraystretch}{1.5}%
+\begin{tabularx}{\linewidth}{X X}
+\hline
+\texttt{p} & The first parameter of the lens space specified, normalized to be greater than zero.\\
+\hline
+\texttt{q} & The second parameter of the lens space specified, normalized so that $p> q > 0$.\\
+\hline
+\end{tabularx}
+
+\bigskip
+
+\textbf{List of methods:}
+
+\renewcommand{\arraystretch}{1.5}%
+\begin{tabularx}{\linewidth}{X X}\\
+\hline
+\texttt{to\_SFS()} & Transforms the lens space specified into a SFS.\\
+\hline
+\texttt{to\_linear\_lattice(epsilon=-1)} & Returns the weights of the linear lattice bounded by the lens space specified. By default, the negative definite linear lattice is returned, unless epsilon is set to 1.\\
+\hline
+\end{tabularx}
+
+\newpage
+
+\section*{\texttt{soapy.Prism}}
+
+This is a subclass of \texttt{soapy.SFS} representing prism manifolds.
+In particular, any object belonging to this subclass inherits all methods defined for objects belonging to \texttt{soapy.SFS}.
+
+An object representing the prism manifold $P(p,q)$ is created by passing the parameters \texttt{p} and \texttt{q} to the constructor of \texttt{soapy.Prism}.
+
+\bigskip
+
+\textbf{List of attributes:}
+
+\renewcommand{\arraystretch}{1.5}%
+\begin{tabularx}{\linewidth}{X X}
+\hline
+\texttt{p} & The first parameter of the prism manifold specified, normalized to be greater than 0.\\
+\hline
+\texttt{q} & The second parameter of the prism manifold specified.\\
+\hline
+\end{tabularx}
+
+\textbf{List of methods:}
+
+\renewcommand{\arraystretch}{1.5}%
+\begin{tabularx}{\linewidth}{X X}
+\hline
+\texttt{to\_SFS()} & Transforms the prism manifold specified into a SFS. \phantom{aaaaaaaaaaaaaaaaaaaa}\\
+\hline
+\end{tabularx}
+
+\section*{\texttt{soapy.Brieskorn}}
+
+This is a subclass of \texttt{soapy.SFS} representing Brieskorn homology spheres.
+In particular, any object belonging to this subclass inherits all methods defined for objects belonging to \texttt{soapy.SFS}.
+
+An object representing the Brieskorn homology sphere $\Sigma(a_{1},\dots,a_{n})$ is created by passing the parameters \texttt{a\_1} through \texttt{a\_n} to the constructor of \texttt{soapy.Brieskorn}.
+If all entries of the tuple are negative, an object representing $-\Sigma(a_{1},\dots,a_{n})$ is created.
+
+\bigskip
+
+\textbf{List of attributes:}
+
+\renewcommand{\arraystretch}{1.5}%
+\begin{tabularx}{\linewidth}{X X}
+\hline
+\texttt{coeffs} & The coefficients of the Brieskorn homology sphere specified. \phantom{aaaa aaaa aaaa}\\
+\hline
+\end{tabularx}
+
+\bigskip
+
+\textbf{List of methods:}
+
+\renewcommand{\arraystretch}{1.5}%
+\begin{tabularx}{\linewidth}{X X}
+\hline
+\texttt{to\_SFS()} & Transforms the Brieskorn homology sphere specified into a SFS. \phantom{aaaaaaaaaaaaaaaaaaaa}\\
+\hline
+\end{tabularx}
+
+\subsection*{Conventions}
+\begin{itemize}
+\item The Seifert fibered space $Y(e;a_{1}/b_{1},\dots,a_{n}/b_{n})$ is the $3$-manifold with surgery diagram given in Figure \ref{diag}.
+\begin{figure}[h]
+\def\svgwidth{200pt}
+\input{diag.pdf_tex}
+\caption{}
+\label{diag}
+\end{figure}
+\item The orbifold Euler number of $Y(e;a_{1}/b_{1},\dots,a_{n}/b_{n})$ is defined to be \[e_{\text{orb}}(Y):=e - \sum_{i=1}^{n}\frac{b_{i}}{a_{i}}.\]
+\item The lens space $L(p,q)$ is the oriented $3$-manifold obtained by performing $-(p/q)$-framed Dehn surgery along the unknot in $S^{3}$.
+Defined for any pair $p,q$ of non-zero coprime integers. 
+\item The prism manifold $P(p,q)$ is defined to be $Y(-1;-2,-2,-p/q)$.
+Defined for any pair $p,q$ of non-zero coprime integers.
+Contrary to some conventions, $p=\pm1$ is allowed; note, however, that $P(1,n)$ is homeomorphic to the lens space $L(4n,2n-1)$.
+\item Brieskorn spheres are oriented such that $\Sigma(2,3,5)$ is the boundary of the negative definite plumbing along the $E_{8}$ Dynkin diagram (where each vertex has weight $-2$).
+$\Sigma(a_{1},\dots,a_{n})$ is defined for any sequence of positive, pairwise coprime integers.
+\item The Casson-Walker invariant is defined as in \cite{Rustamov}, i.e. \[\lambda(Y)=\frac{1}{|H_{1}(Y;\mathbb{Z})|}\sum_{\mathfrak{s}\in\mathrm{Spin}^{c}(Y)}\left(\chi(\mathrm{HF}^{+}_{\mathrm{red}}(Y))-\frac{d(Y,\mathfrak{s})}{2}\right).\]
+\end{itemize}
+
+\subsection*{Obstruction}
+Given a pair of SFS's $Y_1$ and $Y_2$, the package implements the following obstruction to there being a ribbon rational homology cobordism from $Y_1$ to $Y_2$.
+If $Y_1$ admits a ribbon rational homology cobordism to $Y_2$, then
+\begin{itemize}
+\item $|H_{1}(Y_{2};\mathbb{Z})|=u^{2}\cdot|H_{1}(Y_{1};\mathbb{Z})|$, for some $u\in\mathbb{Z}$; and
+\item each correction term of $Y_{1}$ appears $u$ times among the correction terms of $Y_{2}$ (counted with multiplicity)
+\end{itemize}
+
+\emph{Example:} Let $Y_{1}=L(2,1)$ and $Y_{2}=L(8,5)$.
+The lists of correction terms of $Y_{1}$ and $Y_{2}$ are $[-1/4,\,1/4]$ and $[-3/8,\,-3/8,\,-1/4,\,-1/4,\,1/4,\,1/4,\,5/8,\,5/8]$, respectively.
+Since \[|H_{1}(Y_{2};\mathbb{Z})|=8=2^{2}\cdot 2=2^{2}\cdot|H_{1}(Y_{1};\mathbb{Z})|,\] and because each correction term of $Y_{1}$ appears $2$ times among those of $Y_{2}$, the pair passes the obstruction.
+
+Note that, while this implements just an obstruction, pairs of lens spaces (and connected sums thereof) that admit a rational ribbon cobordism from one to the other have been classified in \cite{Huber}
+
+\subsection*{Example}
+Calling \texttt{Y = soapy.SFS(2,2,1,3,2,11,9)} creates an object representing $Y(2;2,3/2,11/9)$. Starting from a plumbing diagram, this object can be created by calling \texttt{soapy.SFS.from\_plumbing(2,[2],[2,2],[2,2,2,2,3])} (generally, the lists of weights along the branches must be specified starting at the central vertex).
+The coefficients of this plumbing can be found by calling \texttt{Y.to\_plumbing()}.
+One can verify that $Y$ is homeomorphic to $-\Sigma(2,3,11)$ e.g. by calling \texttt{Y == -soapy.Brieskorn(2,3,11)} or \texttt{Y == soapy.Brieskorn(-2,-3,-11)}.
+
+Calling \texttt{Y.first\_homology()} returns an empty tuple, thus verifying that $H_{1}(Y;\Z)$ has no non-trivial summands, and hence that $Y$ is an integral homology sphere.
+
+Calling \texttt{Y.print\_HF()} (or, equivalently, \texttt{sp.Brieskorn(2,3,11).print\_HF()}) prints 
+\begin{quote}
+\texttt{HF\^{}+(Y(2; 2, 3/2, 11/9)):\\
+spin\^{}c-structure: (0, 0, 0, 0)\\
+HF\^{}+ = T\_(-2) + Z(1)\_(-2)}
+\end{quote}
+This is to be interpreted as saying that $\hfp(Y)$ in its unique $\text{spin}^{c}$-structure consists of a tower whose bottommost grading is $-2$, together with a $\Z[U]$-torsion summand of order $1$ whose bottommost grading is $-2$ as well.
+In other words, \[\hfp(-\Sigma(2,3,11),\mathfrak{s})\cong\mathcal{T}_{(-2)}^{+}\oplus\Z_{(-2)}.\]
+Accordingly, calling \texttt{Y.correction\_terms()} and \texttt{Y.is\_lspace} returns \texttt{(-2,)} and \texttt{False}, respectively.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bibliographystyle{alpha}
+\bibliography{biblio}
+
+\end{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

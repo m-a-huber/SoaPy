@@ -86,6 +86,10 @@ class SFS:
                 return all([self.p == other.p, max(self.q == other.q, (self.q*other.q)%self.p == 1)])
         return False
     
+    def __hash__(self):
+        weight_tuple = tuple(self.central_weight*w.p for w in self.branch_weights) + tuple(w.q for w in self.branch_weights)
+        return hash(weight_tuple)
+    
     def __le__(self, other):
         """Checks if the first SFS passes the d-invariant obstruction to admitting a ribbon rational homology cobordism to the second SFS.
         """        

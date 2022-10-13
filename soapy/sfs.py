@@ -87,8 +87,13 @@ class SFS:
         return False
     
     def __hash__(self):
-        weight_tuple = tuple(self.central_weight*w.p for w in self.branch_weights) + tuple(w.q for w in self.branch_weights)
-        return hash(weight_tuple)
+        if not self.is_lens_space():
+            seifert_tuple = (self.euler_number(), sorted(self.fractional_branch_weights()))
+            return hash(seifert_tuple)
+        else:
+            L = self.to_lens_space()
+            q = min(self.q, pow(self.q, -1, self.p))
+            return hash((L.p, q))
     
     def __le__(self, other):
         """Checks if the first SFS passes the d-invariant obstruction to admitting a ribbon rational homology cobordism to the second SFS.
@@ -124,6 +129,14 @@ class SFS:
         """
         return self.central_weight - sum([1/w for w in self.branch_weights])
     
+    def seifert_invariants(self):
+        """Returns the Seifert invariants of the SFS specified.
+
+        Returns:
+            tuple(sym.Rational, tuple(sym.Rational)): A tuple of the format (Euler number, (tuple of fractional branch weights)).
+        """        
+        return (self.euler_number(), self.fractional_branch_weights())
+    
     def number_of_exceptional_fibers(self):
         """Returns the number of exceptional fibers of the SFS specified.
 
@@ -140,14 +153,6 @@ class SFS:
         """        
         lists_of_coeffs = (cf.number_to_neg_cont_frac(w.p, w.q) for w in self.branch_weights)
         return (self.central_weight,) + tuple(lst for lst in lists_of_coeffs)
-    
-    def seifert_invariants(self):
-        """Returns the Seifert invariants of the SFS specified.
-
-        Returns:
-            tuple(sym.Rational, tuple(sym.Rational)): A tuple of the format (Euler number, (tuple of fractional branch weights)).
-        """        
-        return (self.euler_number(), self.fractional_branch_weights())
     
     def linking_matrix(self):
         """Returns the linking matrix of the SFS specified.

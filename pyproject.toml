@@ -1,0 +1,9 @@
+[project]
+name = "soapy"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.10"
+dependencies = [
+    "mpmath==1.2.1",
+    "sympy==1.11.1",
+]

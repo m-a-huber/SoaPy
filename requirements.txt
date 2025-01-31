@@ -1,3 +1,0 @@
--i https://pypi.org/simple
-mpmath==1.2.1
-sympy==1.11.1

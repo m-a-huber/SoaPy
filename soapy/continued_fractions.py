@@ -14,13 +14,13 @@ def number_to_neg_cont_frac(p, q):
             a rational number p/q.
     """
     L = []
-    epsilon = int(sym.sign(p*q))
+    epsilon = int(sym.sign(p * q))
     if epsilon < 0:
         p, q = abs(p), abs(q)
     while q != 0:
         L.append(sym.ceiling(p / q))
         p, q = q, sym.ceiling(p / q) * q - p
-    return list(map(int, [epsilon*el for el in L]))
+    return list(map(int, [epsilon * el for el in L]))
 
 
 def number_to_pos_cont_frac(p, q):
@@ -36,13 +36,13 @@ def number_to_pos_cont_frac(p, q):
             a rational number p/q.
     """
     L = []
-    epsilon = sym.sign(p*q)
+    epsilon = sym.sign(p * q)
     if epsilon < 0:
         p, q = abs(p), abs(q)
     while q != 0:
         L.append(sym.floor(p / q))
         p, q = q, p - sym.floor(p / q) * q
-    return list(map(int, [epsilon*el for el in L]))
+    return list(map(int, [epsilon * el for el in L]))
 
 
 def number_from_neg_cont_frac(*args):

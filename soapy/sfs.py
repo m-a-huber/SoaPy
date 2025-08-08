@@ -1,8 +1,9 @@
 import sympy as sym
 from sympy.matrices.normalforms import invariant_factors
-from soapy import hf_nemethi as hf
+
 from soapy import casson_walker as cw
 from soapy import continued_fractions as cf
+from soapy import hf_nemethi as hf
 from soapy import ribbon_obstruction as rib
 
 
@@ -39,10 +40,12 @@ class SFS:
         """
         cond_1 = all(isinstance(el, int) for el in params)
         cond_2 = len(params) % 2 == 1
-        cond_3 = all([
-            sym.gcd(params[i], params[i+1]) == 1
-            for i in range(1, len(params), 2)
-        ])
+        cond_3 = all(
+            [
+                sym.gcd(params[i], params[i + 1]) == 1
+                for i in range(1, len(params), 2)
+            ]
+        )
         cond_4 = all(el != 0 for el in params[1:])
         if not min(cond_1, cond_2, cond_3, cond_4):
             raise ValueError(
@@ -58,7 +61,7 @@ class SFS:
         self.params = tuple(hf.normalize(params)[1])
         self.central_weight = self.params[0]
         self.branch_weights = tuple(
-            sym.Rational(self.params[i], self.params[i+1])
+            sym.Rational(self.params[i], self.params[i + 1])
             for i in range(1, len(self.params), 2)
         )
 
@@ -84,13 +87,9 @@ class SFS:
         cond_1 = isinstance(central_weight, int)
         cond_2 = all(isinstance(lst, list) for lst in lists_of_coeffs)
         cond_3 = all(
-            all(isinstance(el, int) for el in lst)
-            for lst in lists_of_coeffs
+            all(isinstance(el, int) for el in lst) for lst in lists_of_coeffs
         )
-        cond_4 = all(
-            all(el != 0 for el in lst)
-            for lst in lists_of_coeffs
-        )
+        cond_4 = all(all(el != 0 for el in lst) for lst in lists_of_coeffs)
         if not min(cond_1, cond_2, cond_3, cond_4):
             raise ValueError(
                 "The weights on the plumbing graph should be non-zero "
@@ -100,66 +99,57 @@ class SFS:
             cf.number_from_neg_cont_frac(*[i for i in lst])
             for lst in lists_of_coeffs
         )
-        params = sum(
-            ((w.p, w.q) for w in branch_weights),
-            ()
-        )
+        params = sum(((w.p, w.q) for w in branch_weights), ())
         return cls(central_weight, *params)
 
     def __repr__(self):
-        branch_weights_string = ", ".join([
-            str(q)
-            for q in self.branch_weights
-        ])
+        branch_weights_string = ", ".join(
+            [str(q) for q in self.branch_weights]
+        )
         return f"Y({self.central_weight}; {branch_weights_string})"
 
     def __neg__(self):
-        """Returns the SFS with reversed orientation.
-        """
+        """Returns the SFS with reversed orientation."""
         params = tuple(
-            -((-1)**i)*self.params[i]
-            for i in range(len(self.params))
+            -((-1) ** i) * self.params[i] for i in range(len(self.params))
         )
         return SFS(*params)
 
     def __eq__(self, other):
-        """Checks if the two SFS are orientation-preservingly homeomorphic.
-        """
+        """Checks if the two SFS are orientation-preservingly homeomorphic."""
         if isinstance(other, SFS):
             if not max(self.is_lens_space(), other.is_lens_space()):
                 seifert_self = (
                     self.euler_number(),
-                    sorted(self.fractional_branch_weights())
+                    sorted(self.fractional_branch_weights()),
                 )
                 seifert_other = (
                     other.euler_number(),
-                    sorted(other.fractional_branch_weights())
+                    sorted(other.fractional_branch_weights()),
                 )
                 return seifert_self == seifert_other
             if self.is_lens_space() and other.is_lens_space():
                 self, other = self.to_lens_space(), other.to_lens_space()
-                return all([
-                    self.p == other.p,
-                    max(
-                        self.q == other.q,
-                        (self.q*other.q) % self.p == 1
-                    )
-                ])
+                return all(
+                    [
+                        self.p == other.p,
+                        max(
+                            self.q == other.q, (self.q * other.q) % self.p == 1
+                        ),
+                    ]
+                )
         return False
 
     def __hash__(self):
         if not self.is_lens_space():
             seifert_tuple = (
                 self.euler_number(),
-                sorted(self.fractional_branch_weights())
+                sorted(self.fractional_branch_weights()),
             )
             return hash(seifert_tuple)
         else:
             L = self.to_lens_space()
-            q = min(
-                self.q,
-                pow(self.q, -1, self.p)
-            )
+            q = min(self.q, pow(self.q, -1, self.p))
             return hash((L.p, q))
 
     def __le__(self, other):
@@ -190,10 +180,7 @@ class SFS:
             tuple(sym.Rational): Tuple containing the fractional parts of the
                 branch weights.
         """
-        return tuple(
-            (1 / w) - sym.floor(1 / w)
-            for w in self.branch_weights
-        )
+        return tuple((1 / w) - sym.floor(1 / w) for w in self.branch_weights)
 
     def euler_number(self):
         """Returns the orbifold Euler number of the SFS specified.
@@ -232,11 +219,9 @@ class SFS:
                 the branches (read starting from the central vertex).
         """
         lists_of_coeffs = (
-            cf.number_to_neg_cont_frac(w.p, w.q)
-            for w in self.branch_weights
+            cf.number_to_neg_cont_frac(w.p, w.q) for w in self.branch_weights
         )
-        return ((self.central_weight,)
-                + tuple(lst for lst in lists_of_coeffs))
+        return (self.central_weight, *tuple(lst for lst in lists_of_coeffs))
 
     def linking_matrix(self):
         """Returns the linking matrix of the SFS specified.
@@ -349,14 +334,12 @@ class SFS:
         coeffs = [sym.Rational(self.central_weight)]
         if self.number_of_exceptional_fibers() >= 1:
             coeffs += cf.number_to_neg_cont_frac(
-                self.branch_weights[0].p,
-                self.branch_weights[0].q
+                self.branch_weights[0].p, self.branch_weights[0].q
             )
         if self.number_of_exceptional_fibers() == 2:
             coeffs.reverse()
             coeffs += cf.number_to_neg_cont_frac(
-                self.branch_weights[1].p,
-                self.branch_weights[1].q
+                self.branch_weights[1].p, self.branch_weights[1].q
             )
         frac = -cf.number_from_neg_cont_frac(*coeffs)
         return Lens(frac.p, frac.q)
@@ -369,8 +352,10 @@ class SFS:
             bool: Whether or not the the SFS specified is homeomorphic to a
                 prism manifold.
         """
-        return (self.fractional_branch_weights().count(sym.Rational(1, 2)) >= 2
-                and self.number_of_exceptional_fibers() == 3)
+        return (
+            self.fractional_branch_weights().count(sym.Rational(1, 2)) >= 2
+            and self.number_of_exceptional_fibers() == 3
+        )
 
     def to_prism_mfld(self):
         """Transforms the SFS specified into the corresponding prism manifold.
@@ -421,7 +406,7 @@ class Lens(SFS):
         """
         cond_1 = all(isinstance(el, int) for el in (p, q))
         cond_2 = sym.gcd(p, q) == 1
-        cond_3 = p*q != 0
+        cond_3 = p * q != 0
         if not min(cond_1, cond_2, cond_3):
             raise ValueError(
                 "A lens space should be specified by a pair of non-zero "
@@ -430,7 +415,7 @@ class Lens(SFS):
         super().__init__(0, q, p)
         self.p = abs(p)
         self.q = (lambda x: 1 if x == 0 else x)(
-            (lambda q: q % p if p > 0 else (self.p-q) % self.p)(q)
+            (lambda q: q % p if p > 0 else (self.p - q) % self.p)(q)
         )
 
     @classmethod
@@ -458,7 +443,7 @@ class Lens(SFS):
             )
         p, q = (
             cf.number_from_neg_cont_frac(*params).p,
-            cf.number_from_neg_cont_frac(*params).q
+            cf.number_from_neg_cont_frac(*params).q,
         )
         return -cls(p, q)
 
@@ -466,8 +451,7 @@ class Lens(SFS):
         return f"L({self.p},{self.q})"
 
     def __neg__(self):
-        """Returns the lens space with reversed orientation.
-        """
+        """Returns the lens space with reversed orientation."""
         return Lens(self.p, -self.q)
 
     def to_SFS(self):
@@ -535,14 +519,13 @@ class Prism(SFS):
             )
         super().__init__(-1, -2, 1, -2, 1, -p, q)
         self.p = abs(p)
-        self.q = int(sym.sign(p)*q)
+        self.q = int(sym.sign(p) * q)
 
     def __repr__(self):
         return f"P({self.p},{self.q})"
 
     def __neg__(self):
-        """Returns the prism manifold with reversed orientation.
-        """
+        """Returns the prism manifold with reversed orientation."""
         return Prism(self.p, -self.q)
 
     def to_SFS(self):
@@ -598,8 +581,7 @@ class Brieskorn(SFS):
         return f"{sign}Sigma({coeffs_string})"
 
     def __neg__(self):
-        """Returns the Brieskorn homology sphere with reversed orientation.
-        """
+        """Returns the Brieskorn homology sphere with reversed orientation."""
         return Brieskorn(*map(lambda x: -x, self.coeffs))
 
     def to_SFS(self):

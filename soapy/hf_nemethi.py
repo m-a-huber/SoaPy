@@ -1,4 +1,5 @@
 import sympy as sym
+
 from soapy import continued_fractions as cf
 
 # Auxiliary functions that convert 3-manifold
@@ -21,12 +22,10 @@ def normalize(C):
     """
     central_weight = sym.Rational(C[0])
     branch_weights = tuple(
-        sym.Rational(C[i], C[i+1])
-        for i in range(1, len(C), 2)
+        sym.Rational(C[i], C[i + 1]) for i in range(1, len(C), 2)
     )
     fractional_branch_weights = [
-        (1 / w) - sym.floor(1 / w)
-        for w in branch_weights
+        (1 / w) - sym.floor(1 / w) for w in branch_weights
     ]
     euler_number = central_weight - sum([1 / w for w in branch_weights])
     if euler_number == 0:
@@ -36,14 +35,15 @@ def normalize(C):
         for w in fractional_branch_weights
         if w != 0
     ]
-    new_central_weight = euler_number + sum([
-        1 / w
-        for w in new_branch_weights
-    ])
+    new_central_weight = euler_number + sum(
+        [1 / w for w in new_branch_weights]
+    )
     return (
         euler_number,
-        ([int(new_central_weight)]
-         + [i for w in new_branch_weights for i in [w.p, w.q]])
+        (
+            [int(new_central_weight)]
+            + [i for w in new_branch_weights for i in [w.p, w.q]]
+        ),
     )
 
 
@@ -120,54 +120,50 @@ def brieskorn(*A):
     if epsilon == -1:
         A = list(map(abs, A))
     a_0 = sym.prod(A)
-    A_hat = [
-        sym.floor(sym.Rational(a_0, A[i]))
-        for i in range(len(A))
-    ]
-    B = [
-        sym.mod_inverse(-A_hat[i], A[i])
-        for i in range(len(A))
-    ]
+    A_hat = [sym.floor(sym.Rational(a_0, A[i])) for i in range(len(A))]
+    B = [sym.mod_inverse(-A_hat[i], A[i]) for i in range(len(A))]
     e0 = sym.floor(
-        sym.Rational(1, a_0) * (-1 - sum([
-            A_hat[i]*B[i]
-            for i in range(len(A))
-        ]))
+        sym.Rational(1, a_0)
+        * (-1 - sum([A_hat[i] * B[i] for i in range(len(A))]))
     )
     L = [
-        e0 if j == 0 else
-        -A[sym.floor(sym.Rational(j, 2))] if j % 2 == 1 else
-        B[sym.floor(sym.Rational(j, 2))-1] if j % 2 == 0 else
-        "void"
-        for j in range(2*len(A)+1)
+        e0
+        if j == 0
+        else -A[sym.floor(sym.Rational(j, 2))]
+        if j % 2 == 1
+        else B[sym.floor(sym.Rational(j, 2)) - 1]
+        if j % 2 == 0
+        else "void"
+        for j in range(2 * len(A) + 1)
     ]
     if epsilon == -1:
-        L[0] = - L[0]
+        L[0] = -L[0]
         for i in range(1, len(L), 2):
             L[i] = -L[i]
     return list(map(int, L))
+
 
 # Functions that execute Némethi's algorithm.
 
 
 def linking_matrix(C):
     L = [
-        len(cf.number_to_neg_cont_frac(C[i], C[i+1]))
+        len(cf.number_to_neg_cont_frac(C[i], C[i + 1]))
         for i in range(1, len(C), 2)
     ]
-    Ell = sym.zeros(1+sum(L), 1+sum(L))
+    Ell = sym.zeros(1 + sum(L), 1 + sum(L))
     Ell[0, 0] = C[0]
     for j in range(len(L)):
         for k in range(L[j]):
             if k == 0:
-                Ell[0, 1+sum(L[:j])] = 1
-                Ell[1+sum(L[:j]), 0] = 1
+                Ell[0, 1 + sum(L[:j])] = 1
+                Ell[1 + sum(L[:j]), 0] = 1
             else:
-                Ell[k+sum(L[:j]), 1+k+sum(L[:j])] = 1
-                Ell[1+k+sum(L[:j]), k+sum(L[:j])] = 1
-            Ell[1+k+sum(L[:j]), 1+k+sum(L[:j])] = cf.number_to_neg_cont_frac(
-                C[2*j+1], C[2*(j+1)]
-            )[k]
+                Ell[k + sum(L[:j]), 1 + k + sum(L[:j])] = 1
+                Ell[1 + k + sum(L[:j]), k + sum(L[:j])] = 1
+            Ell[1 + k + sum(L[:j]), 1 + k + sum(L[:j])] = (
+                cf.number_to_neg_cont_frac(C[2 * j + 1], C[2 * (j + 1)])[k]
+            )
     return Ell
 
 
@@ -182,17 +178,19 @@ def add_one(x, y):
 
 
 def checkall(a, a_0, e, e_0, Alpha, Beta):
-    n = sym.ceiling(sym.Rational(1+a_0+len(Alpha), abs(e)))+1
+    n = sym.ceiling(sym.Rational(1 + a_0 + len(Alpha), abs(e))) + 1
     for i in range(1, n):
-        cond = (1
-                + a_0
-                + (i*e_0)
-                + sum([
-                    sym.floor(
-                        sym.Rational(i * Beta[ix] + a[ix], Alpha[ix])
-                    )
+        cond = (
+            1
+            + a_0
+            + (i * e_0)
+            + sum(
+                [
+                    sym.floor(sym.Rational(i * Beta[ix] + a[ix], Alpha[ix]))
                     for ix in range(len(Alpha))
-                ])) > 0
+                ]
+            )
+        ) > 0
         if cond:
             return False
     return True
@@ -202,7 +200,7 @@ def truncated_spinc(e, e_0, Alpha, Beta):
     S = []
     for j in range(len(Alpha)):
         for i in reversed(range(Alpha[j])):
-            a = [0]*len(Beta)
+            a = [0] * len(Beta)
             a.insert(j, i)
             if checkall(a, 0, e, e_0, Alpha, Beta):
                 S.append(max(1, i))
@@ -213,7 +211,7 @@ def truncated_spinc(e, e_0, Alpha, Beta):
 def spinc(e, e_0, Alpha, Beta, n):
     S = truncated_spinc(e, e_0, Alpha, Beta)
     p = sym.prod([i + 1 for i in S])
-    a = [0]*len(Alpha)
+    a = [0] * len(Alpha)
     A = {tuple(a)}
     for i in range(p):
         a = add_one(a, S)
@@ -222,16 +220,16 @@ def spinc(e, e_0, Alpha, Beta, n):
     for a in A:
         i = 0
         while len(B) < n and checkall(a, i, e, e_0, Alpha, Beta):
-            b = (i,) + a
+            b = (i, *a)
             B.add(tuple(b))
-            i = i+1
+            i = i + 1
     return B
 
 
 def kill_repetitions(tau):
     tau_norep = [tau[0]]
     for i in range(1, len(tau)):
-        if not tau[i] == tau[i-1]:
+        if not tau[i] == tau[i - 1]:
             tau_norep.append(tau[i])
     return tau_norep
 
@@ -240,11 +238,11 @@ def reduced_sequence(tau):
     tau = kill_repetitions(tau)
     red_tau = [tau[0]]
     for i in range(1, len(tau)):
-        if i == len(tau)-1:
+        if i == len(tau) - 1:
             red_tau.append(tau[i])
-        elif tau[i] >= tau[i-1] and tau[i] >= tau[i+1]:
+        elif tau[i] >= tau[i - 1] and tau[i] >= tau[i + 1]:
             red_tau.append(tau[i])
-        elif tau[i] <= tau[i-1] and tau[i] <= tau[i+1]:
+        elif tau[i] <= tau[i - 1] and tau[i] <= tau[i + 1]:
             red_tau.append(tau[i])
     return red_tau
 
@@ -254,14 +252,14 @@ def tau_delta(a, e, e_0, Alpha, Beta):
     D = [
         1
         + a[0]
-        + i*abs(e_0)
-        + sum([
-            sym.floor(sym.Rational(-i * Beta[j] + a[j+1], Alpha[j]))
-            for j in range(len(Alpha))
-        ])
-        for i in range(sym.ceiling(
-            sym.Rational(len(Alpha), abs(e))) + 1
+        + i * abs(e_0)
+        + sum(
+            [
+                sym.floor(sym.Rational(-i * Beta[j] + a[j + 1], Alpha[j]))
+                for j in range(len(Alpha))
+            ]
         )
+        for i in range(sym.ceiling(sym.Rational(len(Alpha), abs(e))) + 1)
     ]
     for i in range(len(D)):
         P.append(P[-1] + D[i])
@@ -269,52 +267,42 @@ def tau_delta(a, e, e_0, Alpha, Beta):
 
 
 def shift(a, e_0, Alpha, Beta):
-    e = e_0 + sum([
-        sym.Rational(Beta[i], Alpha[i])
-        for i in range(len(Alpha))
-    ])
-    omega = [
-        sym.mod_inverse(Beta[i], Alpha[i])
-        for i in range(len(Alpha))
-    ]
+    e = e_0 + sum([sym.Rational(Beta[i], Alpha[i]) for i in range(len(Alpha))])
+    omega = [sym.mod_inverse(Beta[i], Alpha[i]) for i in range(len(Alpha))]
     epsilon = sym.Rational(
-        2 - len(Alpha) + sum([
-            sym.Rational(1, Alpha[i])
-            for i in range(len(Alpha))
-        ]),
-        e
+        2
+        - len(Alpha)
+        + sum([sym.Rational(1, Alpha[i]) for i in range(len(Alpha))]),
+        e,
     )
-    a_tilde = a[0] + sum([
-        sym.Rational(a[i+1], Alpha[i])
-        for i in range(len(Alpha))
-    ])
+    a_tilde = a[0] + sum(
+        [sym.Rational(a[i + 1], Alpha[i]) for i in range(len(Alpha))]
+    )
     x, y, z, v = (
         sym.Rational(sum(a), 2),
-        sym.Rational(epsilon*a_tilde, 2),
-        sym.Rational(a_tilde**2, 2*e),
-        sym.Rational(0, 1)
+        sym.Rational(epsilon * a_tilde, 2),
+        sym.Rational(a_tilde**2, 2 * e),
+        sym.Rational(0, 1),
     )
     for ix in range(len(Alpha)):
-        v += sum([
-            (sym.Rational(i * omega[ix], Alpha[ix])) % 1
-            for i in range(a[ix+1]+1)
-        ])
+        v += sum(
+            [
+                (sym.Rational(i * omega[ix], Alpha[ix])) % 1
+                for i in range(a[ix + 1] + 1)
+            ]
+        )
     return x + y + z - v
 
 
 def vect_degree(v, Ell):
-    M = (sym.Matrix(v).transpose()
-         * sym.Matrix(Ell).inv()
-         * sym.Matrix(v))
+    M = sym.Matrix(v).transpose() * sym.Matrix(Ell).inv() * sym.Matrix(v)
     return -(sym.Rational((M[0, 0]).p, (M[0, 0]).q) + len(v)) / 4
 
 
 def degree_shift(S):
-    K = [
-        -(S[i, i] + 2)
-        for i in range(sym.shape(S)[0])
-    ]
+    K = [-(S[i, i] + 2) for i in range(sym.shape(S)[0])]
     return vect_degree(K, S)
+
 
 # Auxiliary functions that convert the graded
 # roots and their correction terms into HF^+.
@@ -336,17 +324,17 @@ def tau_to_module(tau):
     s = tau.index(min(tau))
     module = {0: [tau[s]]}
     for ix in reversed(range(s)):
-        if tau[ix+1] - tau[ix] > 0:
+        if tau[ix + 1] - tau[ix] > 0:
             try:
-                module[tau[ix+1] - tau[ix]].append(tau[ix])
+                module[tau[ix + 1] - tau[ix]].append(tau[ix])
             except IndexError:
-                module[tau[ix+1] - tau[ix]] = [tau[ix]]
-    for r in range(s+1, len(tau)):
-        if tau[r-1] - tau[r] > 0:
+                module[tau[ix + 1] - tau[ix]] = [tau[ix]]
+    for r in range(s + 1, len(tau)):
+        if tau[r - 1] - tau[r] > 0:
             try:
-                module[tau[r-1] - tau[r]].append(tau[r])
+                module[tau[r - 1] - tau[r]].append(tau[r])
             except IndexError:
-                module[tau[r-1] - tau[r]] = [tau[r]]
+                module[tau[r - 1] - tau[r]] = [tau[r]]
     return module
 
 
@@ -392,6 +380,7 @@ def minus_HF(module):
         module[key] = [-(i + key) for i in module[key]]
     return module
 
+
 # Functions that return the correspondence between spin^c-structures and the
 # reduced tau sequences, Z[U]-modules and HF^+, respectively, and the
 # correction terms.
@@ -412,24 +401,18 @@ def spinc_to_tau_corr(C):
     """
     S = linking_matrix(C)
     n = abs(sym.det(S))
-    Alpha = [
-        abs(C[i])
-        for i in range(1, len(C), 2)
-    ]
-    Beta = [
-        abs(C[j])
-        for j in range(2, len(C)+1, 2)
-    ]
-    e = C[0] + sum([
-        sym.Rational(Beta[i], Alpha[i])
-        for i in range(len(Beta))
-    ])
+    Alpha = [abs(C[i]) for i in range(1, len(C), 2)]
+    Beta = [abs(C[j]) for j in range(2, len(C) + 1, 2)]
+    e = C[0] + sum([sym.Rational(Beta[i], Alpha[i]) for i in range(len(Beta))])
     A = spinc(e, C[0], Alpha, Beta, n)
-    def s(a): return reduced_sequence(tau_delta(list(a), e, C[0], Alpha, Beta))
+
+    def s(a):
+        return reduced_sequence(tau_delta(list(a), e, C[0], Alpha, Beta))
+
     spinc_to_tau_corr = {
         a: [
             s(a)[:-1],
-            2*min(s(a)) + degree_shift(S) - 2 * shift(a, C[0], Alpha, Beta)
+            2 * min(s(a)) + degree_shift(S) - 2 * shift(a, C[0], Alpha, Beta),
         ]
         for a in A
     }
@@ -453,7 +436,7 @@ def spinc_to_module_corr(C):
     for key in spinc_to_module_corr.keys():
         spinc_to_module_corr[key] = [
             tau_to_module(spinc_to_module_corr[key][0]),
-            spinc_to_module_corr[key][1]
+            spinc_to_module_corr[key][1],
         ]
     return spinc_to_module_corr
 
@@ -479,13 +462,13 @@ def spinc_to_HF(C):
     spinc_to_HF = spinc_to_module_corr(C)
     for key in spinc_to_HF.keys():
         spinc_to_HF[key] = module_corr_to_neg_HF(
-            spinc_to_HF[key][0],
-            spinc_to_HF[key][1]
+            spinc_to_HF[key][0], spinc_to_HF[key][1]
         )
     if epsilon == -1:
         for key in spinc_to_HF.keys():
             spinc_to_HF[key] = minus_HF(spinc_to_HF[key])
     return spinc_to_HF
+
 
 # Additional functions processing the output of spinc_to_HF.
 
@@ -531,10 +514,7 @@ def correction_terms(C):
         for i in range(2, len(C), 2):
             C[i] = abs(C[i])
     corr = spinc_to_tau_corr(C)
-    return [
-        epsilon*corr[key][1]
-        for key in corr.keys()
-    ]
+    return [epsilon * corr[key][1] for key in corr.keys()]
 
 
 def is_lspace(C):

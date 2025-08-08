@@ -1,4 +1,5 @@
 import sympy as sym
+
 from soapy import hf_nemethi as hf
 
 
@@ -17,7 +18,7 @@ def ribbon_obstruction_corr(L, M):
     u = sym.Rational(len(M), len(L))
     if u.is_integer and sym.ntheory.primetest.is_square(u):
         for d in L:
-            if M.count(d) < sym.sqrt(u)*L.count(d):
+            if M.count(d) < sym.sqrt(u) * L.count(d):
                 return False
         return True
     else:
@@ -57,7 +58,7 @@ def ribbon_obstruction_lens(p, q, r, s):
     """
     L, M = (
         hf.correction_terms(hf.lens(p, q)),
-        hf.correction_terms(hf.lens(r, s))
+        hf.correction_terms(hf.lens(r, s)),
     )
     return ribbon_obstruction_corr(L, M)
 
@@ -77,6 +78,6 @@ def ribbon_obstruction_prism(p, q, r, s):
     """
     L, M = (
         hf.correction_terms(hf.prism(p, q)),
-        hf.correction_terms(hf.prism(r, s))
+        hf.correction_terms(hf.prism(r, s)),
     )
     return ribbon_obstruction_corr(L, M)
